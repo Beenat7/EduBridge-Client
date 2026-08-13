@@ -1,0 +1,65 @@
+<section>
+  <h1>Schools</h1>
+  <a routerLink="/schools/new">Create School</a>
+
+  @if (loading()) {
+    <p>Loading schools...</p>
+  }
+
+  @if (error()) {
+    <p>{{ error() }}</p>
+  }
+
+  @if (!loading() && !error()) {
+    @if (schools().length === 0) {
+      <p>No schools found.</p>
+    } @else {
+      <div>
+        @for (school of schools(); track school.id) {
+          <article>
+            <h2>{{ school.name }}</h2>
+
+            <p><strong>Code:</strong> {{ school.code }}</p>
+            <p><strong>Email:</strong> {{ school.email }}</p>
+            <p><strong>Phone:</strong> {{ school.phoneNumber }}</p>
+            <p><strong>Address:</strong> {{ school.address }}</p>
+            <p><strong>Status:</strong> {{ school.status }}</p>
+            
+            <a [routerLink]="['/schools', school.id, 'edit']">
+              Edit
+            </a>
+            
+            <div>
+            @if (school.status === 'Active') {
+                <button
+                type="button"
+                (click)="deactivateSchool(school.id)">
+                Deactivate
+                </button>
+            }
+
+            @if (school.status === 'Inactive') {
+                <button
+                type="button"
+                (click)="activateSchool(school.id)">
+                Activate
+                </button>
+            }
+
+            @if (school.status !== 'Archived') {
+                <button
+                type="button"
+                (click)="archiveSchool(school.id)">
+                Archive
+                </button>
+            }
+            </div>
+
+
+
+          </article>
+        }
+      </div>
+    }
+  }
+</section>

@@ -1,0 +1,118 @@
+<section class="school-form">
+  <h1>
+    {{ isEditMode() ? 'Edit School' : 'Create School' }}
+  </h1>
+
+  @if (loading()) {
+    <p>Loading...</p>
+  }
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <form [formGroup]="schoolForm" (ngSubmit)="onSubmit()">
+
+    <div>
+      <label for="name">School Name</label>
+
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+      />
+
+      @if (
+        schoolForm.controls.name.touched &&
+        schoolForm.controls.name.invalid
+      ) {
+        <small>School name is required.</small>
+      }
+    </div>
+
+    <div>
+      <label for="code">School Code</label>
+
+      <input
+        id="code"
+        type="text"
+        formControlName="code"
+      />
+
+      @if (
+        schoolForm.controls.code.touched &&
+        schoolForm.controls.code.invalid
+      ) {
+        <small>School code is required.</small>
+      }
+    </div>
+
+    <div>
+      <label for="email">Email</label>
+
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+      />
+
+      @if (
+        schoolForm.controls.email.touched &&
+        schoolForm.controls.email.invalid
+      ) {
+        <small>Please enter a valid email.</small>
+      }
+    </div>
+
+    <div>
+      <label for="phoneNumber">Phone Number</label>
+
+      <input
+        id="phoneNumber"
+        type="text"
+        formControlName="phoneNumber"
+      />
+
+      @if (
+        schoolForm.controls.phoneNumber.touched &&
+        schoolForm.controls.phoneNumber.invalid
+      ) {
+        <small>Phone number is required.</small>
+      }
+    </div>
+
+    <div>
+      <label for="address">Address</label>
+
+      <input
+        id="address"
+        type="text"
+        formControlName="address"
+      />
+
+      @if (
+        schoolForm.controls.address.touched &&
+        schoolForm.controls.address.invalid
+      ) {
+        <small>Address is required.</small>
+      }
+    </div>
+
+    <div>
+      <button
+        type="submit"
+        [disabled]="loading()"
+      >
+        {{ isEditMode() ? 'Update School' : 'Create School' }}
+      </button>
+
+      <button
+        type="button"
+        (click)="cancel()"
+      >
+        Cancel
+      </button>
+    </div>
+
+  </form>
+</section>
