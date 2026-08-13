@@ -1,12 +1,24 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 import { School } from '../../models/school.model';
 import { SchoolService } from '../../services/school.service';
 
 @Component({
   selector: 'app-schools',
-  imports: [RouterLink],
+  imports: [RouterLink,
+            MatButtonModule,
+            MatCardModule,
+            MatChipsModule,
+            MatIconModule,
+            MatProgressSpinnerModule  
+          ],
   templateUrl: './schools.html',
   styleUrl: './schools.scss'
 })

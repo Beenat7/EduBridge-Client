@@ -1,65 +1,184 @@
-<section>
-  <h1>Schools</h1>
-  <a routerLink="/schools/new">Create School</a>
+<section class="schools-page">
 
-  @if (loading()) {
-    <p>Loading schools...</p>
-  }
+  <!-- Page Header -->
+  <div class="page-header">
 
+    <div>
+      <h1>Schools</h1>
+      <p>Manage schools registered on EduBridge.</p>
+    </div>
+
+    <a
+      mat-flat-button
+      color="primary"
+      routerLink="/schools/new">
+      <mat-icon>add</mat-icon>
+      Add School
+    </a>
+
+  </div>
+
+  <!-- Error -->
   @if (error()) {
-    <p>{{ error() }}</p>
+    <mat-card class="error-card">
+      <mat-card-content>
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error() }}</span>
+      </mat-card-content>
+    </mat-card>
   }
 
+  <!-- Loading -->
+  @if (loading()) {
+
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading schools...</p>
+    </div>
+
+  }
+
+  <!-- Schools -->
   @if (!loading() && !error()) {
+
     @if (schools().length === 0) {
-      <p>No schools found.</p>
+
+      <mat-card class="empty-card">
+
+        <mat-card-content>
+
+          <mat-icon>school</mat-icon>
+
+          <h2>No schools found</h2>
+
+          <p>
+            Get started by adding your first school.
+          </p>
+
+          <a
+            mat-flat-button
+            color="primary"
+            routerLink="/schools/new">
+            Add School
+          </a>
+
+        </mat-card-content>
+
+      </mat-card>
+
     } @else {
-      <div>
+
+      <div class="schools-grid">
+
         @for (school of schools(); track school.id) {
-          <article>
-            <h2>{{ school.name }}</h2>
 
-            <p><strong>Code:</strong> {{ school.code }}</p>
-            <p><strong>Email:</strong> {{ school.email }}</p>
-            <p><strong>Phone:</strong> {{ school.phoneNumber }}</p>
-            <p><strong>Address:</strong> {{ school.address }}</p>
-            <p><strong>Status:</strong> {{ school.status }}</p>
-            
-            <a [routerLink]="['/schools', school.id, 'edit']">
-              Edit
-            </a>
-            
-            <div>
-            @if (school.status === 'Active') {
+          <mat-card class="school-card">
+
+            <mat-card-header>
+
+              <div mat-card-avatar class="school-avatar">
+                <mat-icon>school</mat-icon>
+              </div>
+
+              <mat-card-title>
+                {{ school.name }}
+              </mat-card-title>
+
+              <mat-card-subtitle>
+                {{ school.code }}
+              </mat-card-subtitle>
+
+            </mat-card-header>
+
+
+            <mat-card-content>
+
+              <div class="school-info">
+
+                <div class="info-row">
+                  <mat-icon>email</mat-icon>
+                  <span>{{ school.email }}</span>
+                </div>
+
+                <div class="info-row">
+                  <mat-icon>phone</mat-icon>
+                  <span>{{ school.phoneNumber }}</span>
+                </div>
+
+                <div class="info-row">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{ school.address }}</span>
+                </div>
+
+              </div>
+
+
+              <div class="status">
+
+                <mat-chip>
+                  {{ school.status }}
+                </mat-chip>
+
+              </div>
+
+            </mat-card-content>
+
+
+            <mat-card-actions>
+
+              <a
+                mat-button
+                [routerLink]="['/schools', school.id, 'edit']">
+                <mat-icon>edit</mat-icon>
+                Edit
+              </a>
+
+
+              @if (school.status === 'Active') {
+
                 <button
-                type="button"
-                (click)="deactivateSchool(school.id)">
-                Deactivate
+                  mat-button
+                  type="button"
+                  (click)="deactivateSchool(school.id)">
+                  <mat-icon>pause_circle</mat-icon>
+                  Deactivate
                 </button>
-            }
 
-            @if (school.status === 'Inactive') {
+              }
+
+
+              @if (school.status === 'Inactive') {
+
                 <button
-                type="button"
-                (click)="activateSchool(school.id)">
-                Activate
+                  mat-button
+                  type="button"
+                  (click)="activateSchool(school.id)">
+                  <mat-icon>play_circle</mat-icon>
+                  Activate
                 </button>
-            }
 
-            @if (school.status !== 'Archived') {
+              }
+
+
+              @if (school.status !== 'Archived') {
+
                 <button
-                type="button"
-                (click)="archiveSchool(school.id)">
-                Archive
+                  mat-button
+                  type="button"
+                  (click)="archiveSchool(school.id)">
+                  <mat-icon>archive</mat-icon>
+                  Archive
                 </button>
-            }
-            </div>
 
+              }
 
-
-          </article>
+            </mat-card-actions>
+          </mat-card>
         }
+
       </div>
+
     }
-  }
+    }
+
 </section>

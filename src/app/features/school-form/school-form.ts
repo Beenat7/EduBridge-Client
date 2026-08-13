@@ -6,6 +6,14 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+
 import {
   CreateSchoolRequest,
   UpdateSchoolRequest
@@ -15,7 +23,14 @@ import { SchoolService } from '../../services/school.service';
 
 @Component({
   selector: 'app-school-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,
+            MatButtonModule,
+            MatCardModule,
+            MatFormFieldModule,
+            MatIconModule,
+            MatInputModule,
+            MatProgressSpinnerModule
+            ],
   templateUrl: './school-form.html',
   styleUrl: './school-form.scss'
 })

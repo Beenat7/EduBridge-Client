@@ -1,118 +1,212 @@
-<section class="school-form">
-  <h1>
-    {{ isEditMode() ? 'Edit School' : 'Create School' }}
-  </h1>
+<section class="school-form-page">
 
-  @if (loading()) {
-    <p>Loading...</p>
-  }
+  <div class="form-header">
+    <button
+      mat-button
+      type="button"
+      (click)="cancel()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Schools
+    </button>
+  </div>
 
-  @if (error()) {
-    <p class="error">{{ error() }}</p>
-  }
 
-  <form [formGroup]="schoolForm" (ngSubmit)="onSubmit()">
+  <mat-card class="form-card">
 
-    <div>
-      <label for="name">School Name</label>
+    <mat-card-header>
+      <mat-card-title>
+        {{ isEditMode() ? 'Edit School' : 'Create School' }}
+      </mat-card-title>
 
-      <input
-        id="name"
-        type="text"
-        formControlName="name"
-      />
+      <mat-card-subtitle>
+        {{
+          isEditMode()
+            ? 'Update the school information below.'
+            : 'Add a new school to EduBridge.'
+        }}
+      </mat-card-subtitle>
+    </mat-card-header>
 
-      @if (
-        schoolForm.controls.name.touched &&
-        schoolForm.controls.name.invalid
-      ) {
-        <small>School name is required.</small>
+    <mat-card-content>
+
+      @if (loading() && isEditMode()) {
+
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Loading school...</p>
+        </div>
+
+      } @else {
+
+        @if (error()) {
+
+          <div class="error-message">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ error() }}</span>
+          </div>
+
+        }
+
+        <form
+          [formGroup]="schoolForm"
+          (ngSubmit)="onSubmit()"
+          class="school-form">
+
+          <!-- School Name -->
+
+          <mat-form-field appearance="outline">
+            <mat-label>School Name</mat-label>
+
+            <input
+              matInput
+              type="text"
+              formControlName="name"
+              placeholder="Enter school name"
+            />
+
+            @if (
+              schoolForm.controls.name.touched &&
+              schoolForm.controls.name.hasError('required')
+            ) {
+              <mat-error>
+                School name is required.
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- School Code -->
+
+          <mat-form-field appearance="outline">
+            <mat-label>School Code</mat-label>
+
+            <input
+              matInput
+              type="text"
+              formControlName="code"
+              placeholder="e.g. UNITY001"
+            />
+
+            @if (
+              schoolForm.controls.code.touched &&
+              schoolForm.controls.code.hasError('required')
+            ) {
+              <mat-error>
+                School code is required.
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Email -->
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+              placeholder="school@example.com"
+            />
+
+            @if (
+              schoolForm.controls.email.touched &&
+              schoolForm.controls.email.hasError('required')
+            ) {
+              <mat-error>
+                Email is required.
+              </mat-error>
+            }
+
+            @if (
+              schoolForm.controls.email.touched &&
+              schoolForm.controls.email.hasError('email')
+            ) {
+              <mat-error>
+                Please enter a valid email.
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Phone -->
+
+          <mat-form-field appearance="outline">
+            <mat-label>Phone Number</mat-label>
+
+            <input
+              matInput
+              type="text"
+              formControlName="phoneNumber"
+              placeholder="+251..."
+            />
+
+            @if (
+              schoolForm.controls.phoneNumber.touched &&
+              schoolForm.controls.phoneNumber.hasError('required')
+            ) {
+              <mat-error>
+                Phone number is required.
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Address -->
+
+          <mat-form-field
+            appearance="outline"
+            class="full-width">
+
+            <mat-label>Address</mat-label>
+
+            <textarea
+              matInput
+              rows="3"
+              formControlName="address"
+              placeholder="Enter school address">
+            </textarea>
+
+            @if (
+              schoolForm.controls.address.touched &&
+              schoolForm.controls.address.hasError('required')
+            ) {
+              <mat-error>
+                Address is required.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+          <!-- Actions -->
+
+          <div class="form-actions">
+
+            <button
+              mat-button
+              type="button"
+              (click)="cancel()"
+              [disabled]="loading()">
+              Cancel
+            </button>
+
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="loading()">
+
+              @if (loading()) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                <mat-icon>
+                  {{ isEditMode() ? 'save' : 'add' }}
+                </mat-icon>
+
+                {{ isEditMode() ? 'Update School' : 'Create School' }}
+              }
+
+            </button>
+          </div>
+        </form>
       }
-    </div>
-
-    <div>
-      <label for="code">School Code</label>
-
-      <input
-        id="code"
-        type="text"
-        formControlName="code"
-      />
-
-      @if (
-        schoolForm.controls.code.touched &&
-        schoolForm.controls.code.invalid
-      ) {
-        <small>School code is required.</small>
-      }
-    </div>
-
-    <div>
-      <label for="email">Email</label>
-
-      <input
-        id="email"
-        type="email"
-        formControlName="email"
-      />
-
-      @if (
-        schoolForm.controls.email.touched &&
-        schoolForm.controls.email.invalid
-      ) {
-        <small>Please enter a valid email.</small>
-      }
-    </div>
-
-    <div>
-      <label for="phoneNumber">Phone Number</label>
-
-      <input
-        id="phoneNumber"
-        type="text"
-        formControlName="phoneNumber"
-      />
-
-      @if (
-        schoolForm.controls.phoneNumber.touched &&
-        schoolForm.controls.phoneNumber.invalid
-      ) {
-        <small>Phone number is required.</small>
-      }
-    </div>
-
-    <div>
-      <label for="address">Address</label>
-
-      <input
-        id="address"
-        type="text"
-        formControlName="address"
-      />
-
-      @if (
-        schoolForm.controls.address.touched &&
-        schoolForm.controls.address.invalid
-      ) {
-        <small>Address is required.</small>
-      }
-    </div>
-
-    <div>
-      <button
-        type="submit"
-        [disabled]="loading()"
-      >
-        {{ isEditMode() ? 'Update School' : 'Create School' }}
-      </button>
-
-      <button
-        type="button"
-        (click)="cancel()"
-      >
-        Cancel
-      </button>
-    </div>
-
-  </form>
+    </mat-card-content>
+  </mat-card>
 </section>

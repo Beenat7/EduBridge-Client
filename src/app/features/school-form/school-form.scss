@@ -1,0 +1,110 @@
+.school-form-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.form-header {
+  margin-bottom: 16px;
+}
+
+.form-card {
+  overflow: hidden;
+}
+
+mat-card-header {
+  margin-bottom: 24px;
+}
+
+mat-card-title {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+mat-card-subtitle {
+  margin-top: 8px;
+}
+
+.school-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+
+  margin-top: 12px;
+}
+
+.loading-container {
+  min-height: 300px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 16px;
+
+  p {
+    margin: 0;
+  }
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 20px;
+  padding: 12px 16px;
+
+  border-radius: 4px;
+
+  background: #ffebee;
+}
+
+.form-actions {
+  button[mat-flat-button] {
+    mat-spinner {
+      margin-right: 8px;
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .school-form-page {
+    padding: 24px 16px;
+  }
+
+  .school-form {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: auto;
+  }
+
+  .form-actions {
+    grid-column: auto;
+    justify-content: stretch;
+
+    button {
+      flex: 1;
+    }
+  }
+}
