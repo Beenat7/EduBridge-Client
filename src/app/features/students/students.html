@@ -1,1 +1,93 @@
-<p>students works!</p>
+<section class="students">
+  <h1>Students</h1>
+
+  <a routerLink="/students/new">
+    Create Student
+  </a>
+
+  @if (loading()) {
+    <p>Loading students...</p>
+  }
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (!loading() && !error()) {
+    @if (students().length === 0) {
+      <p>No students found.</p>
+    } @else {
+
+      <div>
+        @for (student of students(); track student.id) {
+
+          <article>
+            <h2>
+              {{ student.firstName }}
+              {{ student.middleName }}
+              {{ student.lastName }}
+            </h2>
+
+            <p>
+              <strong>Student Code:</strong>
+              {{ student.studentCode }}
+            </p>
+
+            <p>
+              <strong>Date of Birth:</strong>
+              {{ student.dateOfBirth }}
+            </p>
+
+            <p>
+              <strong>Gender:</strong>
+              {{ student.gender }}
+            </p>
+
+            <p>
+              <strong>Grade:</strong>
+              {{ student.grade }}
+            </p>
+
+            <p>
+              <strong>Status:</strong>
+              {{ student.status }}
+            </p>
+
+            <a
+              [routerLink]="['/students', student.id, 'edit']">
+              Edit
+            </a>
+
+            <div>
+
+              @if (student.status === 'Active') {
+                <button
+                  type="button"
+                  (click)="deactivateStudent(student.id)">
+                  Deactivate
+                </button>
+              }
+
+              @if (student.status === 'Inactive') {
+                <button
+                  type="button"
+                  (click)="activateStudent(student.id)">
+                  Activate
+                </button>
+              }
+
+              @if (student.status !== 'Archived') {
+                <button
+                  type="button"
+                  (click)="archiveStudent(student.id)">
+                  Archive
+                </button>
+              }
+            </div>
+
+          </article>
+        }
+      </div>
+    }
+  }
+</section>

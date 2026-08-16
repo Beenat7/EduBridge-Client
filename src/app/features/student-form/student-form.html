@@ -1,1 +1,169 @@
-<p>student-form works!</p>
+<section class="student-form">
+  <h1>
+    {{ isEditMode() ? 'Edit Student' : 'Create Student' }}
+  </h1>
+
+  @if (loading()) {
+    <p>Loading...</p>
+  }
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <form
+    [formGroup]="studentForm"
+    (ngSubmit)="onSubmit()">
+
+    <div>
+      <label for="firstName">First Name</label>
+      <input
+        id="firstName"
+        type="text"
+        formControlName="firstName"
+      />
+
+      @if (
+        studentForm.controls.firstName.touched &&
+        studentForm.controls.firstName.invalid
+      ) {
+        <small>First name is required.</small>
+      }
+    </div>
+
+    <div>
+      <label for="middleName">Middle Name</label>
+      <input
+        id="middleName"
+        type="text"
+        formControlName="middleName"
+      />
+
+      @if (
+        studentForm.controls.middleName.touched &&
+        studentForm.controls.middleName.invalid
+      ) {
+        <small>Middle name is required.</small>
+      }
+    </div>
+
+    <div>
+      <label for="lastName">Last Name</label>
+      <input
+        id="lastName"
+        type="text"
+        formControlName="lastName"
+      />
+
+      @if (
+        studentForm.controls.lastName.touched &&
+        studentForm.controls.lastName.invalid
+      ) {
+        <small>Last name is required.</small>
+      }
+    </div>
+
+    <div>
+      <label for="studentCode">Student Code</label>
+      <input
+        id="studentCode"
+        type="text"
+        formControlName="studentCode"
+      />
+
+      @if (
+        studentForm.controls.studentCode.touched &&
+        studentForm.controls.studentCode.invalid
+      ) {
+        <small>Student code is required.</small>
+      }
+    </div>
+
+    <div>
+      <label for="dateOfBirth">Date of Birth</label>
+      <input
+        id="dateOfBirth"
+        type="date"
+        formControlName="dateOfBirth"
+      />
+
+      @if (
+        studentForm.controls.dateOfBirth.touched &&
+        studentForm.controls.dateOfBirth.invalid
+      ) {
+        <small>Date of birth is required.</small>
+      }
+    </div>
+
+    <div>
+      <label for="gender">Gender</label>
+
+      <select
+        id="gender"
+        formControlName="gender">
+
+        <option value="">Select gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+
+      </select>
+
+      @if (
+        studentForm.controls.gender.touched &&
+        studentForm.controls.gender.invalid
+      ) {
+        <small>Gender is required.</small>
+      }
+    </div>
+
+    <div>
+      <label for="schoolId">School ID</label>
+      <input
+        id="schoolId"
+        type="text"
+        formControlName="schoolId"
+      />
+
+      @if (
+        studentForm.controls.schoolId.touched &&
+        studentForm.controls.schoolId.invalid
+      ) {
+        <small>School is required.</small>
+      }
+    </div>
+
+    <div>
+      <label for="grade">Grade</label>
+      <input
+        id="grade"
+        type="text"
+        formControlName="grade"
+        placeholder="e.g. Grade 8"
+      />
+
+      @if (
+        studentForm.controls.grade.touched &&
+        studentForm.controls.grade.invalid
+      ) {
+        <small>Grade is required.</small>
+      }
+    </div>
+
+    <div>
+      <button
+        type="submit"
+        [disabled]="loading()">
+
+        {{ isEditMode() ? 'Update Student' : 'Create Student' }}
+
+      </button>
+
+      <button
+        type="button"
+        (click)="cancel()">
+        Cancel
+      </button>
+    </div>
+
+  </form>
+</section>
