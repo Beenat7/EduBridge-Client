@@ -1,93 +1,229 @@
-<section class="students">
-  <h1>Students</h1>
+<section class="students-page">
 
-  <a routerLink="/students/new">
-    Create Student
-  </a>
+  <!-- Page Header -->
+  <div class="page-header">
 
-  @if (loading()) {
-    <p>Loading students...</p>
-  }
+    <div>
+      <h1>Students</h1>
+      <p>Manage students registered on EduBridge.</p>
+    </div>
 
+    <a
+      mat-flat-button
+      color="primary"
+      routerLink="/students/new">
+
+      <mat-icon>person_add</mat-icon>
+      Add Student
+
+    </a>
+
+  </div>
+
+
+  <!-- Error -->
   @if (error()) {
-    <p class="error">{{ error() }}</p>
+
+    <mat-card class="error-card">
+
+      <mat-card-content>
+
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error() }}</span>
+
+      </mat-card-content>
+
+    </mat-card>
+
   }
 
+
+  <!-- Loading -->
+  @if (loading()) {
+
+    <div class="loading-container">
+
+      <mat-spinner diameter="40"></mat-spinner>
+
+      <p>Loading students...</p>
+
+    </div>
+
+  }
+
+
+  <!-- Students -->
   @if (!loading() && !error()) {
+
     @if (students().length === 0) {
-      <p>No students found.</p>
+
+      <mat-card class="empty-card">
+
+        <mat-card-content>
+
+          <mat-icon>people</mat-icon>
+
+          <h2>No students found</h2>
+
+          <p>
+            Get started by adding your first student.
+          </p>
+
+          <a
+            mat-flat-button
+            color="primary"
+            routerLink="/students/new">
+
+            Add Student
+
+          </a>
+
+        </mat-card-content>
+
+      </mat-card>
+
     } @else {
 
-      <div>
+      <div class="students-grid">
+
         @for (student of students(); track student.id) {
 
-          <article>
-            <h2>
-              {{ student.firstName }}
-              {{ student.middleName }}
-              {{ student.lastName }}
-            </h2>
+          <mat-card class="student-card">
 
-            <p>
-              <strong>Student Code:</strong>
-              {{ student.studentCode }}
-            </p>
+            <mat-card-header>
 
-            <p>
-              <strong>Date of Birth:</strong>
-              {{ student.dateOfBirth }}
-            </p>
+              <div mat-card-avatar class="student-avatar">
 
-            <p>
-              <strong>Gender:</strong>
-              {{ student.gender }}
-            </p>
+                <mat-icon>person</mat-icon>
 
-            <p>
-              <strong>Grade:</strong>
-              {{ student.grade }}
-            </p>
+              </div>
 
-            <p>
-              <strong>Status:</strong>
-              {{ student.status }}
-            </p>
+              <mat-card-title>
+                {{ student.firstName }}
+                {{ student.middleName }}
+                {{ student.lastName }}
+              </mat-card-title>
 
-            <a
-              [routerLink]="['/students', student.id, 'edit']">
-              Edit
-            </a>
+              <mat-card-subtitle>
+                {{ student.studentCode }}
+              </mat-card-subtitle>
 
-            <div>
+            </mat-card-header>
+
+
+            <mat-card-content>
+
+              <div class="student-info">
+
+                <div class="info-row">
+
+                  <mat-icon>cake</mat-icon>
+
+                  <span>
+                    {{ student.dateOfBirth | date:'mediumDate' }}
+                  </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                  <mat-icon>person</mat-icon>
+
+                  <span>
+                    {{ student.gender }}
+                  </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                  <mat-icon>school</mat-icon>
+
+                  <span>
+                     {{ student.grade }}
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div class="status">
+
+                <mat-chip>
+                  {{ student.status }}
+                </mat-chip>
+
+              </div>
+
+            </mat-card-content>
+
+
+            <mat-card-actions>
+
+              <a
+                mat-button
+                [routerLink]="['/students', student.id, 'edit']">
+
+                <mat-icon>edit</mat-icon>
+                Edit
+
+              </a>
+
 
               @if (student.status === 'Active') {
+
                 <button
+                  mat-button
                   type="button"
                   (click)="deactivateStudent(student.id)">
+
+                  <mat-icon>pause_circle</mat-icon>
                   Deactivate
+
                 </button>
+
               }
+
 
               @if (student.status === 'Inactive') {
+
                 <button
+                  mat-button
                   type="button"
                   (click)="activateStudent(student.id)">
+
+                  <mat-icon>play_circle</mat-icon>
                   Activate
+
                 </button>
+
               }
+
 
               @if (student.status !== 'Archived') {
+
                 <button
+                  mat-button
                   type="button"
                   (click)="archiveStudent(student.id)">
-                  Archive
-                </button>
-              }
-            </div>
 
-          </article>
+                  <mat-icon>archive</mat-icon>
+                  Archive
+
+                </button>
+
+              }
+
+            </mat-card-actions>
+
+          </mat-card>
         }
       </div>
     }
+
   }
+
 </section>

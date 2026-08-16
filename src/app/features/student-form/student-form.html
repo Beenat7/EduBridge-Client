@@ -1,169 +1,296 @@
-<section class="student-form">
-  <h1>
-    {{ isEditMode() ? 'Edit Student' : 'Create Student' }}
-  </h1>
+<section class="student-form-page">
 
-  @if (loading()) {
-    <p>Loading...</p>
-  }
+  <div class="page-header">
+
+    <div>
+      <h1>
+        {{ isEditMode() ? 'Edit Student' : 'Create Student' }}
+      </h1>
+
+      <p>
+        {{
+          isEditMode()
+            ? 'Update student information.'
+            : 'Add a new student to EduBridge.'
+        }}
+      </p>
+    </div>
+
+    <button
+      mat-button
+      type="button"
+      (click)="cancel()">
+
+      <mat-icon>arrow_back</mat-icon>
+      Back to Students
+
+    </button>
+
+  </div>
+
 
   @if (error()) {
-    <p class="error">{{ error() }}</p>
+
+    <mat-card class="error-card">
+
+      <mat-card-content>
+
+        <mat-icon>error_outline</mat-icon>
+
+        <span>{{ error() }}</span>
+
+      </mat-card-content>
+
+    </mat-card>
+
   }
 
-  <form
-    [formGroup]="studentForm"
-    (ngSubmit)="onSubmit()">
 
-    <div>
-      <label for="firstName">First Name</label>
-      <input
-        id="firstName"
-        type="text"
-        formControlName="firstName"
-      />
+  <mat-card class="form-card">
 
-      @if (
-        studentForm.controls.firstName.touched &&
-        studentForm.controls.firstName.invalid
-      ) {
-        <small>First name is required.</small>
-      }
-    </div>
+    <mat-card-content>
 
-    <div>
-      <label for="middleName">Middle Name</label>
-      <input
-        id="middleName"
-        type="text"
-        formControlName="middleName"
-      />
+      <form
+        [formGroup]="studentForm"
+        (ngSubmit)="onSubmit()">
 
-      @if (
-        studentForm.controls.middleName.touched &&
-        studentForm.controls.middleName.invalid
-      ) {
-        <small>Middle name is required.</small>
-      }
-    </div>
+        <div class="form-grid">
 
-    <div>
-      <label for="lastName">Last Name</label>
-      <input
-        id="lastName"
-        type="text"
-        formControlName="lastName"
-      />
+          <!-- First Name -->
+          <mat-form-field appearance="outline">
 
-      @if (
-        studentForm.controls.lastName.touched &&
-        studentForm.controls.lastName.invalid
-      ) {
-        <small>Last name is required.</small>
-      }
-    </div>
+            <mat-label>First Name</mat-label>
 
-    <div>
-      <label for="studentCode">Student Code</label>
-      <input
-        id="studentCode"
-        type="text"
-        formControlName="studentCode"
-      />
+            <input
+              matInput
+              formControlName="firstName"
+              placeholder="Enter first name">
 
-      @if (
-        studentForm.controls.studentCode.touched &&
-        studentForm.controls.studentCode.invalid
-      ) {
-        <small>Student code is required.</small>
-      }
-    </div>
+            @if (
+              studentForm.controls.firstName.hasError('required') &&
+              studentForm.controls.firstName.touched
+            ) {
+              <mat-error>
+                First name is required.
+              </mat-error>
+            }
 
-    <div>
-      <label for="dateOfBirth">Date of Birth</label>
-      <input
-        id="dateOfBirth"
-        type="date"
-        formControlName="dateOfBirth"
-      />
+          </mat-form-field>
 
-      @if (
-        studentForm.controls.dateOfBirth.touched &&
-        studentForm.controls.dateOfBirth.invalid
-      ) {
-        <small>Date of birth is required.</small>
-      }
-    </div>
 
-    <div>
-      <label for="gender">Gender</label>
+          <!-- Middle Name -->
+          <mat-form-field appearance="outline">
 
-      <select
-        id="gender"
-        formControlName="gender">
+            <mat-label>Middle Name</mat-label>
 
-        <option value="">Select gender</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
+            <input
+              matInput
+              formControlName="middleName"
+              placeholder="Enter middle name">
 
-      </select>
+            @if (
+              studentForm.controls.middleName.hasError('required') &&
+              studentForm.controls.middleName.touched
+            ) {
+              <mat-error>
+                Middle name is required.
+              </mat-error>
+            }
 
-      @if (
-        studentForm.controls.gender.touched &&
-        studentForm.controls.gender.invalid
-      ) {
-        <small>Gender is required.</small>
-      }
-    </div>
+          </mat-form-field>
 
-    <div>
-      <label for="schoolId">School ID</label>
-      <input
-        id="schoolId"
-        type="text"
-        formControlName="schoolId"
-      />
 
-      @if (
-        studentForm.controls.schoolId.touched &&
-        studentForm.controls.schoolId.invalid
-      ) {
-        <small>School is required.</small>
-      }
-    </div>
+          <!-- Last Name -->
+          <mat-form-field appearance="outline">
 
-    <div>
-      <label for="grade">Grade</label>
-      <input
-        id="grade"
-        type="text"
-        formControlName="grade"
-        placeholder="e.g. Grade 8"
-      />
+            <mat-label>Last Name</mat-label>
 
-      @if (
-        studentForm.controls.grade.touched &&
-        studentForm.controls.grade.invalid
-      ) {
-        <small>Grade is required.</small>
-      }
-    </div>
+            <input
+              matInput
+              formControlName="lastName"
+              placeholder="Enter last name">
 
-    <div>
-      <button
-        type="submit"
-        [disabled]="loading()">
+            @if (
+              studentForm.controls.lastName.hasError('required') &&
+              studentForm.controls.lastName.touched
+            ) {
+              <mat-error>
+                Last name is required.
+              </mat-error>
+            }
 
-        {{ isEditMode() ? 'Update Student' : 'Create Student' }}
+          </mat-form-field>
 
-      </button>
 
-      <button
-        type="button"
-        (click)="cancel()">
-        Cancel
-      </button>
-    </div>
+          <!-- Student Code -->
+          <mat-form-field appearance="outline">
 
-  </form>
+            <mat-label>Student Code</mat-label>
+
+            <input
+              matInput
+              formControlName="studentCode"
+              placeholder="e.g. STU001">
+
+            @if (
+              studentForm.controls.studentCode.hasError('required') &&
+              studentForm.controls.studentCode.touched
+            ) {
+              <mat-error>
+                Student code is required.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+
+          <!-- Date of Birth -->
+          <mat-form-field appearance="outline">
+
+            <mat-label>Date of Birth</mat-label>
+
+            <input
+              matInput
+              [matDatepicker]="datePicker"
+              formControlName="dateOfBirth">
+
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="datePicker">
+            </mat-datepicker-toggle>
+
+            <mat-datepicker #datePicker></mat-datepicker>
+
+            @if (
+              studentForm.controls.dateOfBirth.hasError('required') &&
+              studentForm.controls.dateOfBirth.touched
+            ) {
+              <mat-error>
+                Date of birth is required.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+
+          <!-- Gender -->
+          <mat-form-field appearance="outline">
+
+            <mat-label>Gender</mat-label>
+
+            <mat-select formControlName="gender">
+
+              <mat-option value="">
+                Select gender
+              </mat-option>
+
+              <mat-option value="Male">
+                Male
+              </mat-option>
+
+              <mat-option value="Female">
+                Female
+              </mat-option>
+
+            </mat-select>
+
+            @if (
+              studentForm.controls.gender.hasError('required') &&
+              studentForm.controls.gender.touched
+            ) {
+              <mat-error>
+                Gender is required.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+
+          <!-- School -->
+          <mat-form-field appearance="outline">
+            <mat-label>School</mat-label>
+
+            <mat-select formControlName="schoolId">
+
+                @for (school of schools(); track school.id) {
+                <mat-option [value]="school.id">
+                    {{ school.name }}
+                </mat-option>
+                }
+
+            </mat-select>
+
+            @if (
+            studentForm.controls.schoolId.touched &&
+            studentForm.controls.schoolId.invalid
+            ) {
+                <mat-error>
+                School is required.
+                </mat-error>
+            }
+
+            </mat-form-field>
+
+
+          <!-- Grade -->
+          <mat-form-field appearance="outline">
+
+            <mat-label>Grade / Class</mat-label>
+
+            <input
+              matInput
+              formControlName="grade"
+              placeholder="e.g. Grade 8">
+
+            @if (
+              studentForm.controls.grade.hasError('required') &&
+              studentForm.controls.grade.touched
+            ) {
+              <mat-error>
+                Grade or class is required.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+        </div>
+
+
+        <div class="form-actions">
+
+          <button
+            mat-button
+            type="button"
+            (click)="cancel()">
+
+            Cancel
+
+          </button>
+
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="loading()">
+
+            @if (loading()) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              <mat-icon>
+                {{ isEditMode() ? 'save' : 'person_add' }}
+              </mat-icon>
+            }
+
+            {{ isEditMode() ? 'Update Student' : 'Create Student' }}
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </mat-card-content>
+
+  </mat-card>
+
 </section>
