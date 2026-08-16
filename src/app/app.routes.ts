@@ -19,6 +19,28 @@ export const routes: Routes = [
       import('./features/school-form/school-form')
         .then(m => m.SchoolForm)
   },
+
+   {
+    path: 'students',
+    loadComponent: () =>
+      import('./features/students/students')
+        .then(m => m.Students)
+  },
+
+  {
+    path: 'students/new',
+    loadComponent: () =>
+      import('./features/student-form/student-form')
+        .then(m => m.StudentForm)
+  },
+
+  {
+    path: 'students/:id/edit',
+    loadComponent: () =>
+      import('./features/student-form/student-form')
+        .then(m => m.StudentForm)
+  },
+
   {
     path: '',
     redirectTo: 'schools',
