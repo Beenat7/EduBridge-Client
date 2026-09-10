@@ -1,0 +1,46 @@
+:host {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eef4ff 0%, #f9fbff 100%);
+}
+
+.login-page {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-card {
+  width: min(100%, 420px);
+  padding: 8px 0;
+}
+
+.login-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e8f0ff;
+  color: #1e4fd6;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.error-banner {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #fdecea;
+  color: #b42318;
+  font-weight: 500;
+}
+
+button {
+  width: 100%;
+}
