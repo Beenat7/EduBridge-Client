@@ -1,0 +1,80 @@
+<div class="app-shell">
+  <mat-toolbar color="primary" class="topbar">
+    <button
+      mat-icon-button
+      type="button"
+      class="menu-button"
+      (click)="toggleSidenav()"
+      aria-label="Toggle navigation">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <div class="brand-block">
+      <span class="brand-name">EduBridge</span>
+    </div>
+
+    <div class="topbar-spacer"></div>
+
+    @if (currentUser(); as user) {
+      <div class="user-summary">
+        <div class="user-meta">
+          <span class="user-email">{{ user.email }}</span>
+          <span class="user-role">{{ userRole() }}</span>
+        </div>
+
+        <button mat-stroked-button type="button" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          Logout
+        </button>
+      </div>
+    }
+  </mat-toolbar>
+
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav
+      [opened]="sidenavOpen()"
+      [mode]="isMobile() ? 'over' : 'side'"
+      [fixedInViewport]="isMobile()"
+      class="sidebar">
+      <div class="nav-header">
+        <span>Navigation</span>
+      </div>
+
+      <mat-nav-list>
+        @for (item of navigationItems; track item.route) {
+          <a
+            mat-list-item
+            [routerLink]="item.route"
+            routerLinkActive="active-link"
+            (click)="closeSidenav()">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.label }}</span>
+          </a>
+        }
+      </mat-nav-list>
+
+      <mat-divider></mat-divider>
+
+      <div class="nav-section-label">Future modules</div>
+      <mat-nav-list>
+        @for (item of futureNavigation; track item.label) {
+          <a
+            mat-list-item
+            [class.disabled-link]="!item.route"
+            [attr.aria-disabled]="!item.route"
+            [routerLink]="item.route ?? null"
+            (click)="closeSidenav()">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.label }}</span>
+          </a>
+        }
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="content-panel">
+      <main class="page-content">
+        <router-outlet />
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
