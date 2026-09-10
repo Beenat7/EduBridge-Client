@@ -53,6 +53,24 @@ export const routes: Routes = [
             .then((m) => m.StudentForm)
       },
       {
+        path: 'parents',
+        loadComponent: () =>
+          import('./features/parents/parents')
+            .then((m) => m.Parents)
+      },
+      {
+        path: 'parents/new',
+        loadComponent: () =>
+          import('./features/parent-form/parent-form')
+            .then((m) => m.ParentForm)
+      },
+      {
+        path: 'parents/:id/edit',
+        loadComponent: () =>
+          import('./features/parent-form/parent-form')
+            .then((m) => m.ParentForm)
+      },
+      {
         path: '',
         redirectTo: '/schools',
         pathMatch: 'full'

@@ -46,7 +46,7 @@ export class AppShell {
   ];
 
   readonly futureNavigation = [
-    { label: 'Parents', route: null, icon: 'family_restroom' },
+    { label: 'Parents', route: '/parents', icon: 'family_restroom' },
     { label: 'Teachers', route: null, icon: 'person' },
     { label: 'Classes', route: null, icon: 'class' },
     { label: 'Subjects', route: null, icon: 'menu_book' }
