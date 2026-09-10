@@ -17,6 +17,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/dashboard/dashboard')
+            .then((m) => m.Dashboard)
+      },
+      {
         path: 'schools',
         loadComponent: () =>
           import('./features/schools/schools')
@@ -126,14 +132,14 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/schools',
+        redirectTo: '/dashboard',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '**',
-    redirectTo: '/schools',
+    redirectTo: '/dashboard',
     pathMatch: 'full'
   }
 ];

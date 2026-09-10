@@ -57,7 +57,7 @@ export class LoginComponent {
       })
       .subscribe({
         next: () => {
-          this.router.navigateByUrl('/schools');
+          this.router.navigateByUrl('/dashboard');
         },
         error: () => {
           this.error.set('Invalid email or password.');

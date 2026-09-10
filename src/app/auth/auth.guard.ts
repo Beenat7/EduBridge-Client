@@ -21,7 +21,7 @@ export const publicOnlyGuard: CanActivateFn = () => {
 
   return authService.waitForInitialization().pipe(
     map((authenticated) =>
-      authenticated ? router.createUrlTree(['/schools']) : true
+      authenticated ? router.createUrlTree(['/dashboard']) : true
     )
   );
 };

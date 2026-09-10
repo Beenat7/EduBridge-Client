@@ -41,6 +41,7 @@ export class AppShell {
   });
 
   readonly navigationItems = [
+    { label: 'Dashboard', route: '/dashboard', icon: 'dashboard' },
     { label: 'Schools', route: '/schools', icon: 'school' },
     { label: 'Students', route: '/students', icon: 'people' },
     { label: 'Parents', route: '/parents', icon: 'family_restroom' },

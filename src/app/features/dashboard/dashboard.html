@@ -1,0 +1,99 @@
+<section class="dashboard-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Overview</p>
+      <h1>
+        @if (currentUser(); as user) {
+          Welcome back, {{ user.email }}
+        } @else {
+          Welcome back
+        }
+      </h1>
+      <p class="subtitle">Your EduBridge workspace at a glance.</p>
+    </div>
+
+    @if (currentUser(); as user) {
+      <mat-chip-set>
+        <mat-chip>{{ user.roles[0] || 'User' }}</mat-chip>
+      </mat-chip-set>
+    }
+  </div>
+
+  @if (error()) {
+    <mat-card class="error-card">
+      <mat-card-content>
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error() }}</span>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading overview...</p>
+    </div>
+  }
+
+  @if (!loading() && !error()) {
+    <div class="stats-grid">
+      @for (metric of metrics(); track metric.label) {
+        <a class="metric-card" [routerLink]="metric.route" mat-card>
+          <mat-card-content>
+            <div class="metric-head">
+              <div class="metric-icon">
+                <mat-icon>{{ metric.icon }}</mat-icon>
+              </div>
+              <span class="metric-label">{{ metric.label }}</span>
+            </div>
+
+            <div class="metric-value">{{ metric.value }}</div>
+          </mat-card-content>
+        </a>
+      }
+    </div>
+
+    <div class="panel-grid">
+      <mat-card class="panel-card">
+        <mat-card-header>
+          <mat-card-title>Quick actions</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="action-list">
+            @for (action of quickActions; track action.label) {
+              <a
+                mat-stroked-button
+                [routerLink]="action.route"
+                [matTooltip]="action.label"
+                class="action-button">
+                <mat-icon>{{ action.icon }}</mat-icon>
+                <span>{{ action.label }}</span>
+              </a>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="panel-card">
+        <mat-card-header>
+          <mat-card-title>School system</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="module-list">
+            @for (metric of metrics(); track metric.label) {
+              <a [routerLink]="metric.route" class="module-row">
+                <div class="module-name">
+                  <mat-icon>{{ metric.icon }}</mat-icon>
+                  <span>{{ metric.label }}</span>
+                </div>
+                <strong>{{ metric.value }}</strong>
+              </a>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</section>
