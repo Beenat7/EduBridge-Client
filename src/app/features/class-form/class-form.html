@@ -1,0 +1,79 @@
+<section class="class-form-page">
+  <mat-card class="form-card">
+    <mat-card-header class="card-header">
+      <mat-card-title>{{ isEditMode() ? 'Edit Class' : 'Add Class' }}</mat-card-title>
+      <mat-card-subtitle>
+        {{ isEditMode() ? 'Update the selected class record.' : 'Create a new class for your school.' }}
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (error()) {
+        <div class="error-banner">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      @if (loading()) {
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Saving class...</p>
+        </div>
+      }
+
+      @if (!loading()) {
+        <form [formGroup]="classForm" (ngSubmit)="onSubmit()" class="class-form">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>School</mat-label>
+              <mat-select formControlName="schoolId">
+                @for (school of schools(); track school.id) {
+                  <mat-option [value]="school.id">{{ school.name }}</mat-option>
+                }
+              </mat-select>
+              @if (classForm.controls.schoolId.hasError('required') && classForm.controls.schoolId.touched) {
+                <mat-error>School is required.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Class name</mat-label>
+              <input matInput formControlName="name" />
+              @if (classForm.controls.name.hasError('required') && classForm.controls.name.touched) {
+                <mat-error>Class name is required.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Grade level</mat-label>
+              <mat-select formControlName="gradeLevel">
+                @for (gradeLevel of gradeLevels; track gradeLevel) {
+                  <mat-option [value]="gradeLevel">{{ gradeLevel }}</mat-option>
+                }
+              </mat-select>
+              @if (classForm.controls.gradeLevel.hasError('required') && classForm.controls.gradeLevel.touched) {
+                <mat-error>Grade level is required.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Section</mat-label>
+              <input matInput formControlName="section" />
+              @if (classForm.controls.section.hasError('required') && classForm.controls.section.touched) {
+                <mat-error>Section is required.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="cancel()">Cancel</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="classForm.invalid || loading()">
+              {{ isEditMode() ? 'Save Changes' : 'Create Class' }}
+            </button>
+          </div>
+        </form>
+      }
+    </mat-card-content>
+  </mat-card>
+</section>

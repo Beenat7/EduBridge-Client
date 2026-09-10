@@ -3,7 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { API_CONFIG } from '../config/api.config';
-import { CreateClassRequest, SchoolClass } from '../models/class.model';
+import {
+  ClassSubject,
+  CreateClassRequest,
+  SchoolClass,
+  UpdateClassRequest
+} from '../models/class.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +30,7 @@ export class ClassService {
     return this.http.post<SchoolClass>(this.apiUrl, request);
   }
 
-  update(id: string, request: CreateClassRequest): Observable<SchoolClass> {
+  update(id: string, request: UpdateClassRequest): Observable<SchoolClass> {
     return this.http.put<SchoolClass>(`${this.apiUrl}/${id}`, request);
   }
 
@@ -39,5 +44,17 @@ export class ClassService {
 
   archive(id: string): Observable<SchoolClass> {
     return this.http.post<SchoolClass>(`${this.apiUrl}/${id}/archive`, {});
+  }
+
+  getSubjects(classId: string): Observable<ClassSubject[]> {
+    return this.http.get<ClassSubject[]>(`${this.apiUrl}/${classId}/subjects`);
+  }
+
+  assignSubject(classId: string, subjectId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${classId}/subjects`, { subjectId });
+  }
+
+  removeSubject(classId: string, subjectId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${classId}/subjects/${subjectId}`);
   }
 }

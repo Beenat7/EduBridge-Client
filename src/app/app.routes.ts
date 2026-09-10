@@ -107,6 +107,24 @@ export const routes: Routes = [
             .then((m) => m.SubjectForm)
       },
       {
+        path: 'classes',
+        loadComponent: () =>
+          import('./features/classes/classes')
+            .then((m) => m.Classes)
+      },
+      {
+        path: 'classes/new',
+        loadComponent: () =>
+          import('./features/class-form/class-form')
+            .then((m) => m.ClassForm)
+      },
+      {
+        path: 'classes/:id/edit',
+        loadComponent: () =>
+          import('./features/class-form/class-form')
+            .then((m) => m.ClassForm)
+      },
+      {
         path: '',
         redirectTo: '/schools',
         pathMatch: 'full'

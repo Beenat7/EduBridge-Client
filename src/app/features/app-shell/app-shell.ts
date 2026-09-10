@@ -45,12 +45,11 @@ export class AppShell {
     { label: 'Students', route: '/students', icon: 'people' },
     { label: 'Parents', route: '/parents', icon: 'family_restroom' },
     { label: 'Teachers', route: '/teachers', icon: 'person' },
-    { label: 'Subjects', route: '/subjects', icon: 'menu_book' }
+    { label: 'Subjects', route: '/subjects', icon: 'menu_book' },
+    { label: 'Classes', route: '/classes', icon: 'class' }
   ];
 
-  readonly futureNavigation = [
-    { label: 'Classes', route: null, icon: 'class' }
-  ];
+  readonly futureNavigation: Array<{ label: string; route: string | null; icon: string }> = [];
 
   constructor() {
     this.updateLayoutMode();

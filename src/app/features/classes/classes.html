@@ -1,0 +1,187 @@
+<section class="classes-page">
+  <div class="page-header">
+    <div>
+      <h1>Classes</h1>
+      <p>Manage class groups, grade levels, and subject assignments.</p>
+    </div>
+
+    <a mat-flat-button color="primary" routerLink="/classes/new">
+      <mat-icon>add</mat-icon>
+      Add Class
+    </a>
+  </div>
+
+  @if (error()) {
+    <mat-card class="error-card">
+      <mat-card-content>
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error() }}</span>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading classes...</p>
+    </div>
+  }
+
+  @if (!loading() && !error()) {
+    @if (!hasClasses()) {
+      <mat-card class="empty-card">
+        <mat-card-content>
+          <mat-icon>class</mat-icon>
+          <h2>No classes found</h2>
+          <p>Get started by creating the first class.</p>
+          <a mat-flat-button color="primary" routerLink="/classes/new">Add Class</a>
+        </mat-card-content>
+      </mat-card>
+    } @else {
+      <div class="table-card">
+        <div class="table-scroll">
+          <table mat-table [dataSource]="classes()" class="class-table">
+            <ng-container matColumnDef="class">
+              <th mat-header-cell *matHeaderCellDef>Class</th>
+              <td mat-cell *matCellDef="let schoolClass">
+                <div class="class-name-cell">
+                  <div class="class-avatar">
+                    <mat-icon>class</mat-icon>
+                  </div>
+                  <div>
+                    <div class="class-name">{{ schoolClass.name }}</div>
+                    <div class="class-subtext">{{ schoolClass.section }}</div>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="gradeLevel">
+              <th mat-header-cell *matHeaderCellDef>Grade</th>
+              <td mat-cell *matCellDef="let schoolClass">{{ schoolClass.gradeLevel }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="section">
+              <th mat-header-cell *matHeaderCellDef>Section</th>
+              <td mat-cell *matCellDef="let schoolClass">{{ schoolClass.section }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="school">
+              <th mat-header-cell *matHeaderCellDef>School</th>
+              <td mat-cell *matCellDef="let schoolClass">{{ schoolName(schoolClass) }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let schoolClass">
+                <span [class]="getStatusClass(schoolClass.status)">{{ schoolClass.status }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let schoolClass">
+                <div class="action-group">
+                  <button mat-icon-button type="button" color="primary" (click)="toggleDetails(schoolClass.id)" aria-label="View class details" matTooltip="View details" matTooltipPosition="above">
+                    <mat-icon>{{ isExpanded(schoolClass.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+                  </button>
+
+                  <a mat-icon-button type="button" color="primary" [routerLink]="['/classes', schoolClass.id, 'edit']" aria-label="Edit class" matTooltip="Edit class" matTooltipPosition="above">
+                    <mat-icon>edit</mat-icon>
+                  </a>
+
+                  @if (schoolClass.status === 'Inactive' || schoolClass.status === 'Archived') {
+                    <button mat-icon-button type="button" color="accent" (click)="activateClass(schoolClass.id)" aria-label="Activate class" matTooltip="Activate" matTooltipPosition="above">
+                      <mat-icon>play_circle</mat-icon>
+                    </button>
+                  }
+
+                  @if (schoolClass.status === 'Active') {
+                    <button mat-icon-button type="button" color="accent" (click)="deactivateClass(schoolClass.id)" aria-label="Deactivate class" matTooltip="Deactivate" matTooltipPosition="above">
+                      <mat-icon>pause_circle</mat-icon>
+                    </button>
+                  }
+
+                  @if (schoolClass.status !== 'Archived') {
+                    <button mat-icon-button type="button" color="warn" (click)="archiveClass(schoolClass.id)" aria-label="Archive class" matTooltip="Archive" matTooltipPosition="above">
+                      <mat-icon>archive</mat-icon>
+                    </button>
+                  }
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="class-row"></tr>
+          </table>
+        </div>
+
+        @for (schoolClass of classes(); track schoolClass.id) {
+          @if (isExpanded(schoolClass.id)) {
+            <div class="class-detail-panel">
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Class name</span>
+                  <span>{{ schoolClass.name }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Grade level</span>
+                  <span>{{ schoolClass.gradeLevel }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Section</span>
+                  <span>{{ schoolClass.section }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">School</span>
+                  <span>{{ schoolName(schoolClass) }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Status</span>
+                  <span>{{ schoolClass.status }}</span>
+                </div>
+              </div>
+
+              <div class="relationship-panel">
+                <div class="relationship-section">
+                  <div class="section-header">
+                    <h3>Assigned subjects</h3>
+                    <div class="assignment-controls">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Assign subject</mat-label>
+                        <mat-select [value]="selectedSubjectValue(schoolClass.id)" (selectionChange)="onSubjectSelectionChange(schoolClass.id, $event.value)">
+                          @for (subject of allSubjectsForSchool(schoolClass.schoolId); track subject.id) {
+                            <mat-option [value]="subject.id">{{ subject.name }}</mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
+
+                      <button mat-flat-button color="primary" type="button" (click)="assignSelectedSubject(schoolClass.id)" matTooltip="Assign subject to class" matTooltipPosition="above">
+                        Add subject
+                      </button>
+                    </div>
+                  </div>
+
+                  @if (assignedSubjects(schoolClass.id).length === 0) {
+                    <p class="no-items">No subjects assigned.</p>
+                  } @else {
+                    <div class="chip-list">
+                      @for (subject of assignedSubjects(schoolClass.id); track subject.id) {
+                        <span class="info-chip">
+                          {{ subject.name }}
+                          <button mat-icon-button type="button" color="warn" (click)="removeSubjectFromClass(schoolClass.id, subject.id)" aria-label="Remove subject from class" matTooltip="Remove subject" matTooltipPosition="above">
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        </span>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    }
+  }
+</section>
