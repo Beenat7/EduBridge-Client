@@ -1,0 +1,182 @@
+<section class="subjects-page">
+  <div class="page-header">
+    <div>
+      <h1>Subjects</h1>
+      <p>Manage academic subjects, status, and school assignments.</p>
+    </div>
+
+    <a mat-flat-button color="primary" routerLink="/subjects/new">
+      <mat-icon>add</mat-icon>
+      Add Subject
+    </a>
+  </div>
+
+  @if (error()) {
+    <mat-card class="error-card">
+      <mat-card-content>
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error() }}</span>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading subjects...</p>
+    </div>
+  }
+
+  @if (!loading() && !error()) {
+    @if (!hasSubjects()) {
+      <mat-card class="empty-card">
+        <mat-card-content>
+          <mat-icon>menu_book</mat-icon>
+          <h2>No subjects found</h2>
+          <p>Get started by creating the first subject.</p>
+          <a mat-flat-button color="primary" routerLink="/subjects/new">Add Subject</a>
+        </mat-card-content>
+      </mat-card>
+    } @else {
+      <div class="table-card">
+        <div class="table-scroll">
+          <table mat-table [dataSource]="subjects()" class="subject-table">
+            <ng-container matColumnDef="subject">
+              <th mat-header-cell *matHeaderCellDef>Subject</th>
+              <td mat-cell *matCellDef="let subject">
+                <div class="subject-name-cell">
+                  <div class="subject-avatar">
+                    <mat-icon>menu_book</mat-icon>
+                  </div>
+                  <div>
+                    <div class="subject-name">{{ subject.name }}</div>
+                    <div class="subject-subtext">{{ subject.code }}</div>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="code">
+              <th mat-header-cell *matHeaderCellDef>Code</th>
+              <td mat-cell *matCellDef="let subject">{{ subject.code }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef>Description</th>
+              <td mat-cell *matCellDef="let subject" class="description-cell">
+                {{ subject.description || 'No description provided.' }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="school">
+              <th mat-header-cell *matHeaderCellDef>School</th>
+              <td mat-cell *matCellDef="let subject">{{ schoolName(subject) }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let subject">
+                <span [class]="getStatusClass(subject.status)">{{ subject.status }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let subject">
+                <div class="action-group">
+                  <button mat-icon-button type="button" color="primary" (click)="toggleDetails(subject.id)" aria-label="View subject details" matTooltip="View details" matTooltipPosition="above">
+                    <mat-icon>{{ isExpanded(subject.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+                  </button>
+
+                  <a mat-icon-button type="button" color="primary" [routerLink]="['/subjects', subject.id, 'edit']" aria-label="Edit subject" matTooltip="Edit" matTooltipPosition="above">
+                    <mat-icon>edit</mat-icon>
+                  </a>
+
+                  @if (subject.status === 'Inactive' || subject.status === 'Archived') {
+                    <button mat-icon-button type="button" color="accent" (click)="activateSubject(subject.id)" aria-label="Activate subject" matTooltip="Activate" matTooltipPosition="above">
+                      <mat-icon>play_circle</mat-icon>
+                    </button>
+                  }
+
+                  @if (subject.status === 'Active') {
+                    <button mat-icon-button type="button" color="accent" (click)="deactivateSubject(subject.id)" aria-label="Deactivate subject" matTooltip="Deactivate" matTooltipPosition="above">
+                      <mat-icon>pause_circle</mat-icon>
+                    </button>
+                  }
+
+                  @if (subject.status !== 'Archived') {
+                    <button mat-icon-button type="button" color="warn" (click)="archiveSubject(subject.id)" aria-label="Archive subject" matTooltip="Archive" matTooltipPosition="above">
+                      <mat-icon>archive</mat-icon>
+                    </button>
+                  }
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="subject-row"></tr>
+          </table>
+        </div>
+
+        @for (subject of subjects(); track subject.id) {
+          @if (isExpanded(subject.id)) {
+            <div class="subject-detail-panel">
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Name</span>
+                  <span>{{ subject.name }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Code</span>
+                  <span>{{ subject.code }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">School</span>
+                  <span>{{ schoolName(subject) }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Status</span>
+                  <span>{{ subject.status }}</span>
+                </div>
+                <div class="detail-item detail-wide">
+                  <span class="label">Description</span>
+                  <span>{{ subject.description || 'No description provided.' }}</span>
+                </div>
+              </div>
+
+              <div class="relationship-panel">
+                <div class="relationship-section">
+                  <h3>Assigned classes</h3>
+
+                  @if (assignedClasses(subject.id).length === 0) {
+                    <p class="no-items">No classes assigned.</p>
+                  } @else {
+                    <div class="chip-list">
+                      @for (schoolClass of assignedClasses(subject.id); track schoolClass.id) {
+                        <span class="info-chip">{{ schoolClass.name }} {{ schoolClass.code ? '(' + schoolClass.code + ')' : '' }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <div class="relationship-section">
+                  <h3>Assigned teachers</h3>
+
+                  @if (assignedTeachers(subject.id).length === 0) {
+                    <p class="no-items">No teachers assigned.</p>
+                  } @else {
+                    <div class="chip-list">
+                      @for (teacher of assignedTeachers(subject.id); track teacher.id) {
+                        <span class="info-chip">{{ teacher.name }} {{ teacher.code ? '(' + teacher.code + ')' : '' }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    }
+  }
+</section>
