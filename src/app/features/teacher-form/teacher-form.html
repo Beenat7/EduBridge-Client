@@ -1,0 +1,109 @@
+<section class="teacher-form-page">
+  <mat-card class="form-card">
+    <mat-card-header class="card-header">
+      <mat-card-title>{{ isEditMode() ? 'Edit Teacher' : 'Add Teacher' }}</mat-card-title>
+      <mat-card-subtitle>
+        {{ isEditMode() ? 'Update the selected teacher record.' : 'Create a new teacher record for a school.' }}
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (error()) {
+        <div class="error-banner">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      @if (loading()) {
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Saving teacher...</p>
+        </div>
+      }
+
+      @if (!loading()) {
+        <form [formGroup]="teacherForm" (ngSubmit)="onSubmit()" class="teacher-form">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>School</mat-label>
+              <mat-select formControlName="schoolId">
+                @for (school of schools(); track school.id) {
+                  <mat-option [value]="school.id">{{ school.name }}</mat-option>
+                }
+              </mat-select>
+              @if (teacherForm.controls.schoolId.hasError('required') && teacherForm.controls.schoolId.touched) {
+                <mat-error>School is required.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>First name</mat-label>
+              <input matInput formControlName="firstName" />
+              @if (teacherForm.controls.firstName.hasError('required') && teacherForm.controls.firstName.touched) {
+                <mat-error>First name is required.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Middle name</mat-label>
+              <input matInput formControlName="middleName" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Last name</mat-label>
+              <input matInput formControlName="lastName" />
+              @if (teacherForm.controls.lastName.hasError('required') && teacherForm.controls.lastName.touched) {
+                <mat-error>Last name is required.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" />
+              @if (teacherForm.controls.email.hasError('required') && teacherForm.controls.email.touched) {
+                <mat-error>Email is required.</mat-error>
+              }
+              @if (teacherForm.controls.email.hasError('email') && teacherForm.controls.email.touched) {
+                <mat-error>Enter a valid email.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Phone number</mat-label>
+              <input matInput formControlName="phoneNumber" />
+              @if (teacherForm.controls.phoneNumber.hasError('required') && teacherForm.controls.phoneNumber.touched) {
+                <mat-error>Phone number is required.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Employee code</mat-label>
+              <input matInput formControlName="employeeCode" />
+              @if (teacherForm.controls.employeeCode.hasError('required') && teacherForm.controls.employeeCode.touched) {
+                <mat-error>Employee code is required.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Hire date</mat-label>
+              <input matInput [matDatepicker]="hireDatePicker" formControlName="hireDate" />
+              <mat-datepicker-toggle matSuffix [for]="hireDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #hireDatePicker></mat-datepicker>
+              @if (teacherForm.controls.hireDate.hasError('required') && teacherForm.controls.hireDate.touched) {
+                <mat-error>Hire date is required.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="cancel()">Cancel</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="teacherForm.invalid || loading()">
+              {{ isEditMode() ? 'Save Changes' : 'Create Teacher' }}
+            </button>
+          </div>
+        </form>
+      }
+    </mat-card-content>
+  </mat-card>
+</section>

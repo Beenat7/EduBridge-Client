@@ -42,12 +42,12 @@ export class AppShell {
 
   readonly navigationItems = [
     { label: 'Schools', route: '/schools', icon: 'school' },
-    { label: 'Students', route: '/students', icon: 'people' }
+    { label: 'Students', route: '/students', icon: 'people' },
+    { label: 'Parents', route: '/parents', icon: 'family_restroom' },
+    { label: 'Teachers', route: '/teachers', icon: 'person' }
   ];
 
   readonly futureNavigation = [
-    { label: 'Parents', route: '/parents', icon: 'family_restroom' },
-    { label: 'Teachers', route: null, icon: 'person' },
     { label: 'Classes', route: null, icon: 'class' },
     { label: 'Subjects', route: null, icon: 'menu_book' }
   ];
