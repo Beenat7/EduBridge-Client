@@ -27,40 +27,34 @@ export class StudentService {
   }
 
   create(request: CreateStudentRequest): Observable<Student> {
-    return this.http.post<Student>(
-      this.apiUrl,
-      request
-    );
+    return this.http.post<Student>(this.apiUrl, request);
   }
 
-  update(
-    id: string,
-    request: UpdateStudentRequest
-  ): Observable<Student> {
-    return this.http.put<Student>(
-      `${this.apiUrl}/${id}`,
-      request
-    );
+  update(id: string, request: UpdateStudentRequest): Observable<Student> {
+    return this.http.put<Student>(`${this.apiUrl}/${id}`, request);
   }
 
   archive(id: string): Observable<Student> {
-    return this.http.post<Student>(
-      `${this.apiUrl}/${id}/archive`,
-      {}
-    );
+    return this.http.post<Student>(`${this.apiUrl}/${id}/archive`, {});
   }
 
   activate(id: string): Observable<Student> {
-    return this.http.put<Student>(
-      `${this.apiUrl}/${id}/activate`,
-      {}
-    );
+    return this.http.put<Student>(`${this.apiUrl}/${id}/activate`, {});
   }
 
   deactivate(id: string): Observable<Student> {
-    return this.http.put<Student>(
-      `${this.apiUrl}/${id}/deactivate`,
-      {}
-    );
+    return this.http.put<Student>(`${this.apiUrl}/${id}/deactivate`, {});
+  }
+
+  assignClass(studentId: string, classId: string): Observable<Student> {
+    return this.http.post<Student>(`${this.apiUrl}/${studentId}/class`, { classId });
+  }
+
+  changeClass(studentId: string, classId: string): Observable<Student> {
+    return this.http.put<Student>(`${this.apiUrl}/${studentId}/class`, { classId });
+  }
+
+  removeClass(studentId: string): Observable<Student> {
+    return this.http.delete<Student>(`${this.apiUrl}/${studentId}/class`);
   }
 }

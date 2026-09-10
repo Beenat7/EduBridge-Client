@@ -1,229 +1,197 @@
 <section class="students-page">
-
-  <!-- Page Header -->
   <div class="page-header">
-
     <div>
       <h1>Students</h1>
-      <p>Manage students registered on EduBridge.</p>
+      <p>Manage student enrollment, class assignment, and lifecycle status.</p>
     </div>
 
-    <a
-      mat-flat-button
-      color="primary"
-      routerLink="/students/new">
-
+    <a mat-flat-button color="primary" routerLink="/students/new">
       <mat-icon>person_add</mat-icon>
       Add Student
-
     </a>
-
   </div>
 
-
-  <!-- Error -->
   @if (error()) {
-
     <mat-card class="error-card">
-
       <mat-card-content>
-
         <mat-icon>error_outline</mat-icon>
         <span>{{ error() }}</span>
-
       </mat-card-content>
-
     </mat-card>
-
   }
 
-
-  <!-- Loading -->
   @if (loading()) {
-
     <div class="loading-container">
-
       <mat-spinner diameter="40"></mat-spinner>
-
       <p>Loading students...</p>
-
     </div>
-
   }
 
-
-  <!-- Students -->
   @if (!loading() && !error()) {
-
-    @if (students().length === 0) {
-
+    @if (!hasStudents()) {
       <mat-card class="empty-card">
-
         <mat-card-content>
-
           <mat-icon>people</mat-icon>
-
           <h2>No students found</h2>
-
-          <p>
-            Get started by adding your first student.
-          </p>
-
-          <a
-            mat-flat-button
-            color="primary"
-            routerLink="/students/new">
-
-            Add Student
-
-          </a>
-
+          <p>Get started by adding your first student.</p>
+          <a mat-flat-button color="primary" routerLink="/students/new">Add Student</a>
         </mat-card-content>
-
       </mat-card>
-
     } @else {
+      <div class="table-card">
+        <div class="table-scroll">
+          <table mat-table [dataSource]="students()" class="student-table">
+            <ng-container matColumnDef="student">
+              <th mat-header-cell *matHeaderCellDef>Student</th>
+              <td mat-cell *matCellDef="let student">
+                <div class="student-name-cell">
+                  <div class="student-avatar">
+                    <mat-icon>person</mat-icon>
+                  </div>
+                  <div>
+                    <div class="student-name">{{ fullName(student) }}</div>
+                    <div class="student-subtext">{{ student.studentCode }}</div>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
 
-      <div class="students-grid">
+            <ng-container matColumnDef="grade">
+              <th mat-header-cell *matHeaderCellDef>Grade</th>
+              <td mat-cell *matCellDef="let student">{{ student.grade }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="className">
+              <th mat-header-cell *matHeaderCellDef>Class</th>
+              <td mat-cell *matCellDef="let student">{{ student.className || 'Unassigned' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="gender">
+              <th mat-header-cell *matHeaderCellDef>Gender</th>
+              <td mat-cell *matCellDef="let student">{{ student.gender }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="dateOfBirth">
+              <th mat-header-cell *matHeaderCellDef>Date of Birth</th>
+              <td mat-cell *matCellDef="let student">{{ student.dateOfBirth | date: 'mediumDate' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let student">
+                <span [class]="getStatusClass(student.status)">{{ student.status }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let student">
+                <div class="action-group">
+                  <button mat-icon-button type="button" color="primary" (click)="toggleDetails(student.id)" aria-label="More student details" matTooltip="View student details" matTooltipPosition="above">
+                    <mat-icon>{{ isExpanded(student.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+                  </button>
+
+                  <a mat-icon-button type="button" color="primary" [routerLink]="['/students', student.id, 'edit']" aria-label="Edit student" matTooltip="Edit student" matTooltipPosition="above">
+                    <mat-icon>edit</mat-icon>
+                  </a>
+
+                  @if (student.status === 'Active') {
+                    <button mat-icon-button type="button" color="accent" (click)="deactivateStudent(student.id)" aria-label="Deactivate student" matTooltip="Deactivate" matTooltipPosition="above">
+                      <mat-icon>pause_circle</mat-icon>
+                    </button>
+                  }
+
+                  @if (student.status === 'Inactive') {
+                    <button mat-icon-button type="button" color="accent" (click)="activateStudent(student.id)" aria-label="Activate student" matTooltip="Activate" matTooltipPosition="above">
+                      <mat-icon>play_circle</mat-icon>
+                    </button>
+                  }
+
+                  @if (student.status !== 'Archived') {
+                    <button mat-icon-button type="button" color="warn" (click)="archiveStudent(student.id)" aria-label="Archive student" matTooltip="Archive" matTooltipPosition="above">
+                      <mat-icon>archive</mat-icon>
+                    </button>
+                  }
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="student-row"></tr>
+
+            <tr *matNoDataRow>
+              <td class="no-data" colspan="7">No students available.</td>
+            </tr>
+          </table>
+        </div>
 
         @for (student of students(); track student.id) {
-
-          <mat-card class="student-card">
-
-            <mat-card-header>
-
-              <div mat-card-avatar class="student-avatar">
-
-                <mat-icon>person</mat-icon>
-
+          @if (isExpanded(student.id)) {
+            <div class="student-detail-panel">
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Full name</span>
+                  <span>{{ fullName(student) }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Student code</span>
+                  <span>{{ student.studentCode }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">School ID</span>
+                  <span>{{ student.schoolId }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Grade</span>
+                  <span>{{ student.grade }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Class</span>
+                  <span>{{ student.className || 'Unassigned' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Gender</span>
+                  <span>{{ student.gender }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Date of birth</span>
+                  <span>{{ student.dateOfBirth | date: 'mediumDate' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Status</span>
+                  <span>{{ student.status }}</span>
+                </div>
               </div>
 
-              <mat-card-title>
-                {{ student.firstName }}
-                {{ student.middleName }}
-                {{ student.lastName }}
-              </mat-card-title>
+              <div class="class-assignment-block">
+                <mat-form-field appearance="outline">
+                  <mat-label>Class assignment</mat-label>
+                  <mat-select [value]="selectedClassValue(student)" (selectionChange)="onClassSelectionChange(student.id, $event.value)">
+                    <mat-option value="">Unassigned</mat-option>
+                    @for (schoolClass of classes(); track schoolClass.id) {
+                      <mat-option [value]="schoolClass.id">
+                        {{ schoolClass.name }} ({{ schoolClass.gradeLevel }} {{ schoolClass.section }})
+                      </mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
 
-              <mat-card-subtitle>
-                {{ student.studentCode }}
-              </mat-card-subtitle>
+                <div class="assignment-actions">
+                  <button mat-flat-button color="primary" type="button" (click)="assignOrChangeClass(student)" [matTooltip]="student.classId ? 'Update assigned class' : 'Assign class to student'" matTooltipPosition="above">
+                    {{ student.classId ? 'Update Class' : 'Assign Class' }}
+                  </button>
 
-            </mat-card-header>
-
-
-            <mat-card-content>
-
-              <div class="student-info">
-
-                <div class="info-row">
-
-                  <mat-icon>cake</mat-icon>
-
-                  <span>
-                    {{ student.dateOfBirth | date:'mediumDate' }}
-                  </span>
-
+                  @if (student.classId) {
+                    <button mat-button type="button" color="warn" (click)="removeStudentClass(student)" matTooltip="Remove class" matTooltipPosition="above">
+                      Remove Class
+                    </button>
+                  }
                 </div>
-
-
-                <div class="info-row">
-
-                  <mat-icon>person</mat-icon>
-
-                  <span>
-                    {{ student.gender }}
-                  </span>
-
-                </div>
-
-
-                <div class="info-row">
-
-                  <mat-icon>school</mat-icon>
-
-                  <span>
-                     {{ student.grade }}
-                  </span>
-
-                </div>
-
               </div>
-
-
-              <div class="status">
-
-                <mat-chip>
-                  {{ student.status }}
-                </mat-chip>
-
-              </div>
-
-            </mat-card-content>
-
-
-            <mat-card-actions>
-
-              <a
-                mat-button
-                [routerLink]="['/students', student.id, 'edit']">
-
-                <mat-icon>edit</mat-icon>
-                Edit
-
-              </a>
-
-
-              @if (student.status === 'Active') {
-
-                <button
-                  mat-button
-                  type="button"
-                  (click)="deactivateStudent(student.id)">
-
-                  <mat-icon>pause_circle</mat-icon>
-                  Deactivate
-
-                </button>
-
-              }
-
-
-              @if (student.status === 'Inactive') {
-
-                <button
-                  mat-button
-                  type="button"
-                  (click)="activateStudent(student.id)">
-
-                  <mat-icon>play_circle</mat-icon>
-                  Activate
-
-                </button>
-
-              }
-
-
-              @if (student.status !== 'Archived') {
-
-                <button
-                  mat-button
-                  type="button"
-                  (click)="archiveStudent(student.id)">
-
-                  <mat-icon>archive</mat-icon>
-                  Archive
-
-                </button>
-
-              }
-
-            </mat-card-actions>
-
-          </mat-card>
+            </div>
+          }
         }
       </div>
     }
-
   }
-
 </section>

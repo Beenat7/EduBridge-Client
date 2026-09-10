@@ -8,6 +8,8 @@ export interface Student {
   gender: string;
   schoolId: string;
   grade: string;
+  classId?: string | null;
+  className?: string | null;
   status: string;
 }
 
