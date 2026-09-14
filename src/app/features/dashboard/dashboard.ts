@@ -15,7 +15,7 @@ import { ParentService } from '../../services/parent.service';
 import { TeacherService } from '../../services/teacher.service';
 import { SubjectService } from '../../services/subject.service';
 import { ClassService } from '../../services/class.service';
-
+import { AnnouncementService } from '../../services/announcement.service';
 import { forkJoin } from 'rxjs';
 
 interface DashboardCounts {
@@ -25,6 +25,7 @@ interface DashboardCounts {
   teachers: number;
   subjects: number;
   classes: number;
+  announcements: number;
 }
 
 @Component({
@@ -50,7 +51,7 @@ export class Dashboard {
   private readonly teacherService = inject(TeacherService);
   private readonly subjectService = inject(SubjectService);
   private readonly classService = inject(ClassService);
-
+  private readonly announcementService = inject(AnnouncementService);
   readonly currentUser = this.authService.currentUser;
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
@@ -61,7 +62,8 @@ export class Dashboard {
     parents: 0,
     teachers: 0,
     subjects: 0,
-    classes: 0
+    classes: 0,
+    announcements: 0
   });
 
   readonly metrics = computed(() => [
@@ -70,7 +72,8 @@ export class Dashboard {
     { label: 'Parents', value: this.counts().parents, route: '/parents', icon: 'family_restroom' },
     { label: 'Teachers', value: this.counts().teachers, route: '/teachers', icon: 'person' },
     { label: 'Subjects', value: this.counts().subjects, route: '/subjects', icon: 'menu_book' },
-    { label: 'Classes', value: this.counts().classes, route: '/classes', icon: 'class' }
+    { label: 'Classes', value: this.counts().classes, route: '/classes', icon: 'class' },
+    { label: 'Announcements', value: this.counts().announcements, route: '/announcements', icon: 'campaign' }
   ]);
 
   readonly quickActions = [
@@ -79,7 +82,8 @@ export class Dashboard {
     { label: 'Add Parent', route: '/parents/new', icon: 'group_add' },
     { label: 'Add Teacher', route: '/teachers/new', icon: 'person_add_alt_1' },
     { label: 'Add Subject', route: '/subjects/new', icon: 'library_add' },
-    { label: 'Add Class', route: '/classes/new', icon: 'class' }
+    { label: 'Add Class', route: '/classes/new', icon: 'class' },
+    { label: 'Add Announcement', route: '/announcements/new', icon: 'campaign' }
   ];
 
   constructor() {
@@ -96,7 +100,8 @@ export class Dashboard {
       parents: this.parentService.getAll(),
       teachers: this.teacherService.getAll(),
       subjects: this.subjectService.getAll(),
-      classes: this.classService.getAll()
+      classes: this.classService.getAll(),
+      announcements: this.announcementService.getAll()
     }).subscribe({
       next: (result) => {
         this.counts.set({
@@ -105,7 +110,8 @@ export class Dashboard {
           parents: result.parents.length,
           teachers: result.teachers.length,
           subjects: result.subjects.length,
-          classes: result.classes.length
+          classes: result.classes.length,
+          announcements: result.announcements.length
         });
         this.loading.set(false);
       },

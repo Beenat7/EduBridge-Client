@@ -130,6 +130,28 @@ export const routes: Routes = [
           import('./features/class-form/class-form')
             .then((m) => m.ClassForm)
       },
+
+      {
+      path: 'announcements',
+      loadComponent: () =>
+        import('./features/announcements/announcements')
+          .then((m) => m.Announcements)
+      },
+
+      {
+        path: 'announcements/new',
+        loadComponent: () =>
+          import('./features/announcement-form/announcement-form')
+            .then((m) => m.AnnouncementForm)
+      },
+
+      {
+        path: 'announcements/:id/edit',
+        loadComponent: () =>
+          import('./features/announcement-form/announcement-form')
+            .then((m) => m.AnnouncementForm)
+      },
+
       {
         path: '',
         redirectTo: '/dashboard',

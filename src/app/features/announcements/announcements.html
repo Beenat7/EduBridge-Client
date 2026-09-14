@@ -1,0 +1,176 @@
+<section class="announcements-page">
+  <div class="page-header">
+    <div>
+      <h1>Announcements</h1>
+      <p>Manage school announcements and keep parents and teachers informed.</p>
+    </div>
+
+    <a mat-flat-button color="primary" routerLink="/announcements/new">
+      <mat-icon>add</mat-icon>
+      Add Announcement
+    </a>
+  </div>
+
+  @if (error()) {
+    <mat-card class="error-card">
+      <mat-card-content>
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error() }}</span>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading announcements...</p>
+    </div>
+  }
+
+  @if (!loading() && !error()) {
+    @if (!hasAnnouncements()) {
+      <mat-card class="empty-card">
+        <mat-card-content>
+          <mat-icon>campaign</mat-icon>
+          <h2>No announcements found</h2>
+          <p>Get started by creating the first announcement.</p>
+
+          <a
+            mat-flat-button
+            color="primary"
+            routerLink="/announcements/new"
+          >
+            Add Announcement
+          </a>
+        </mat-card-content>
+      </mat-card>
+    } @else {
+      <div class="table-card">
+        <div class="table-scroll">
+          <table
+            mat-table
+            [dataSource]="announcements()"
+            class="announcement-table"
+          >
+            <ng-container matColumnDef="announcement">
+              <th mat-header-cell *matHeaderCellDef>
+                Announcement
+              </th>
+
+              <td mat-cell *matCellDef="let announcement">
+                <div class="announcement-name-cell">
+                  <div class="announcement-avatar">
+                    <mat-icon>campaign</mat-icon>
+                  </div>
+
+                  <div>
+                    <div class="announcement-title">
+                      {{ announcement.title }}
+                    </div>
+
+                    <div class="announcement-subtext">
+                      {{ announcement.body }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>
+                Status
+              </th>
+
+              <td mat-cell *matCellDef="let announcement">
+                <span
+                  [class]="getStatusClass(announcement.status)"
+                >
+                  {{ announcement.status }}
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="createdAt">
+              <th mat-header-cell *matHeaderCellDef>
+                Created
+              </th>
+
+              <td mat-cell *matCellDef="let announcement">
+                {{ announcement.createdAt | date:'mediumDate' }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>
+                Actions
+              </th>
+
+              <td mat-cell *matCellDef="let announcement">
+                <div class="action-group">
+
+                  <a
+                    mat-icon-button
+                    color="primary"
+                    [routerLink]="[
+                      '/announcements',
+                      announcement.id,
+                      'edit'
+                    ]"
+                    aria-label="Edit announcement"
+                    matTooltip="Edit announcement"
+                    matTooltipPosition="above"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </a>
+
+                  @if (announcement.status === 'Draft') {
+                    <button
+                      mat-icon-button
+                      type="button"
+                      color="accent"
+                      (click)="publishAnnouncement(announcement.id)"
+                      aria-label="Publish announcement"
+                      matTooltip="Publish"
+                      matTooltipPosition="above"
+                    >
+                      <mat-icon>publish</mat-icon>
+                    </button>
+                  }
+
+                  @if (announcement.status !== 'Archived') {
+                    <button
+                      mat-icon-button
+                      type="button"
+                      color="warn"
+                      (click)="archiveAnnouncement(announcement.id)"
+                      aria-label="Archive announcement"
+                      matTooltip="Archive"
+                      matTooltipPosition="above"
+                    >
+                      <mat-icon>archive</mat-icon>
+                    </button>
+                  }
+
+                </div>
+              </td>
+            </ng-container>
+
+            <tr
+              mat-header-row
+              *matHeaderRowDef="displayedColumns"
+            ></tr>
+
+            <tr
+              mat-row
+              *matRowDef="
+                let row;
+                columns: displayedColumns;
+              "
+              class="announcement-row"
+            ></tr>
+          </table>
+        </div>
+      </div>
+    }
+  }
+</section>
