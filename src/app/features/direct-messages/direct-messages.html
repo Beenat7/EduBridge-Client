@@ -1,0 +1,101 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>Direct Messages</h1>
+      <p>View and manage messages between parents and teachers.</p>
+    </div>
+
+    <a
+      mat-raised-button
+      color="primary"
+      routerLink="/direct-messages/new"
+    >
+      <mat-icon>add</mat-icon>
+      New Message
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <mat-card class="state-card">
+      <mat-icon>hourglass_empty</mat-icon>
+      <p>Loading messages...</p>
+    </mat-card>
+  } @else if (errorMessage()) {
+    <mat-card class="state-card error-card">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <p>{{ errorMessage() }}</p>
+
+      <button mat-stroked-button color="primary" (click)="loadMessages()">
+        Try Again
+      </button>
+    </mat-card>
+  } @else if (messages().length === 0) {
+    <mat-card class="state-card">
+      <mat-icon>mail_outline</mat-icon>
+      <h2>No messages yet</h2>
+      <p>There are no direct messages to display.</p>
+
+      <a
+        mat-raised-button
+        color="primary"
+        routerLink="/direct-messages/new"
+      >
+        Send First Message
+      </a>
+    </mat-card>
+  } @else {
+    <div class="messages-list">
+      @for (message of messages(); track message.id) {
+        <mat-card
+          class="message-card"
+          [class.unread]="!message.isRead"
+        >
+          <div class="message-header">
+            <div class="participant-info">
+              <div class="participant-icon">
+                <mat-icon>person</mat-icon>
+              </div>
+
+              <div>
+                <h2>
+                  {{ message.senderType }} → {{ message.recipientType }}
+                </h2>
+
+                <p>
+                  {{ message.createdAt | date: 'medium' }}
+                </p>
+              </div>
+            </div>
+
+            @if (!message.isRead) {
+              <mat-chip color="primary">Unread</mat-chip>
+            } @else {
+              <mat-chip>Read</mat-chip>
+            }
+          </div>
+
+          <p class="message-body">
+            {{ message.body }}
+          </p>
+
+          <div class="message-footer">
+            <span class="student-id">
+              Student ID: {{ message.studentId }}
+            </span>
+
+            @if (!message.isRead) {
+              <button
+                mat-stroked-button
+                color="primary"
+                (click)="markAsRead(message)"
+              >
+                <mat-icon>done</mat-icon>
+                Mark as Read
+              </button>
+            }
+          </div>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

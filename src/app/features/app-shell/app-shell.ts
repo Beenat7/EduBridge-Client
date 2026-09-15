@@ -48,7 +48,8 @@ export class AppShell {
     { label: 'Teachers', route: '/teachers', icon: 'person' },
     { label: 'Subjects', route: '/subjects', icon: 'menu_book' },
     { label: 'Classes', route: '/classes', icon: 'class' },
-     { label: 'Announcements', route: '/announcements', icon: 'campaign' }
+    { label: 'Announcements', route: '/announcements', icon: 'campaign' },
+    {label: 'Direct Messages',route: '/direct-messages',icon: 'mail',},
   ];
 
   readonly futureNavigation: Array<{ label: string; route: string | null; icon: string }> = [];

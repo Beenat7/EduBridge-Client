@@ -1,0 +1,164 @@
+.page-container {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 8px 0 0;
+    color: #6b7280;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.state-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 240px;
+  padding: 32px;
+  text-align: center;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #6b7280;
+  }
+
+  h2,
+  p {
+    margin: 0;
+  }
+}
+
+.error-card {
+  mat-icon {
+    color: #dc2626;
+  }
+}
+
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.message-card {
+  padding: 20px;
+  border-left: 4px solid transparent;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &.unread {
+    border-left-color: #3f51b5;
+    background-color: #f8f9ff;
+  }
+}
+
+.message-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.participant-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.participant-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #e8eaf6;
+
+  mat-icon {
+    color: #3f51b5;
+  }
+}
+
+.message-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.message-header p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.message-body {
+  margin: 20px 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.message-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.student-id {
+  color: #6b7280;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.message-footer button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 700px) {
+  .page-container {
+    padding: 16px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .message-header,
+  .message-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .message-footer button {
+    width: 100%;
+    justify-content: center;
+  }
+}

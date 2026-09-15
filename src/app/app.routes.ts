@@ -151,6 +151,18 @@ export const routes: Routes = [
           import('./features/announcement-form/announcement-form')
             .then((m) => m.AnnouncementForm)
       },
+      {
+      path: 'direct-messages',
+      loadComponent: () =>
+        import('./features/direct-messages/direct-messages')
+          .then((m) => m.DirectMessages),
+      },
+      {
+      path: 'direct-messages/new',
+      loadComponent: () =>
+        import('./features/direct-message-form/direct-message-form')
+          .then((m) => m.DirectMessageForm),
+      },
 
       {
         path: '',

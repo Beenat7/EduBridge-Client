@@ -1,0 +1,244 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>New Direct Message</h1>
+      <p>Send a message between a parent and teacher.</p>
+    </div>
+  </div>
+
+  <mat-card class="form-card">
+    <form [formGroup]="messageForm" (ngSubmit)="submit()">
+
+  
+  <mat-form-field appearance="outline">
+    <mat-label>School</mat-label>
+
+    <mat-select formControlName="schoolId">
+      @for (school of schools(); track school.id) {
+        <mat-option [value]="school.id">
+          {{ school.name }}
+        </mat-option>
+      }
+    </mat-select>
+
+    @if (
+      messageForm.controls.schoolId.touched &&
+      messageForm.controls.schoolId.hasError('required')
+    ) {
+      <mat-error>School is required.</mat-error>
+    }
+  </mat-form-field>
+
+
+  <!-- Student -->
+  <mat-form-field appearance="outline">
+    <mat-label>Student</mat-label>
+
+    <mat-select formControlName="studentId">
+      @if (!messageForm.controls.schoolId.value) {
+        <mat-option disabled>
+          Select a school first
+        </mat-option>
+      } @else if (isLoadingStudents()) {
+        <mat-option disabled>
+          Loading students...
+        </mat-option>
+      } @else if (students().length === 0) {
+        <mat-option disabled>
+          No students found
+        </mat-option>
+      } @else {
+        @for (student of students(); track student.id) {
+          <mat-option [value]="student.id">
+            {{ student.firstName }}
+            {{ student.middleName }}
+            {{ student.lastName }}
+          </mat-option>
+        }
+      }
+    </mat-select>
+
+    @if (
+      messageForm.controls.studentId.touched &&
+      messageForm.controls.studentId.hasError('required')
+    ) {
+      <mat-error>Student is required.</mat-error>
+    }
+  </mat-form-field>
+
+
+  <!-- Sender Type -->
+  <mat-form-field appearance="outline">
+    <mat-label>Sender Type</mat-label>
+
+    <mat-select formControlName="senderType">
+      @for (type of participantTypes; track type) {
+        <mat-option [value]="type">
+          {{ type }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+
+  <!-- Sender -->
+  <mat-form-field appearance="outline">
+    <mat-label>Sender</mat-label>
+
+    <mat-select formControlName="senderId">
+      @if (!messageForm.controls.schoolId.value) {
+        <mat-option disabled>
+          Select a school first
+        </mat-option>
+      } @else if (isLoadingParticipants()) {
+        <mat-option disabled>
+          Loading...
+        </mat-option>
+      } @else if (messageForm.controls.senderType.value === 'Parent') {
+        @for (parent of parents(); track parent.id) {
+          <mat-option [value]="parent.id">
+            {{ parent.firstName }}
+            {{ parent.middleName }}
+            {{ parent.lastName }}
+          </mat-option>
+        }
+      } @else {
+        @for (teacher of teachers(); track teacher.id) {
+          <mat-option [value]="teacher.id">
+            {{ teacher.firstName }}
+            {{ teacher.middleName }}
+            {{ teacher.lastName }}
+          </mat-option>
+        }
+      }
+    </mat-select>
+
+    @if (
+      messageForm.controls.senderId.touched &&
+      messageForm.controls.senderId.hasError('required')
+    ) {
+      <mat-error>Sender is required.</mat-error>
+    }
+  </mat-form-field>
+
+
+  <!-- Recipient Type -->
+  <mat-form-field appearance="outline">
+    <mat-label>Recipient Type</mat-label>
+
+    <mat-select formControlName="recipientType">
+      @for (type of participantTypes; track type) {
+        <mat-option [value]="type">
+          {{ type }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+
+  <!-- Recipient -->
+  <mat-form-field appearance="outline">
+    <mat-label>Recipient</mat-label>
+
+    <mat-select formControlName="recipientId">
+      @if (!messageForm.controls.schoolId.value) {
+        <mat-option disabled>
+          Select a school first
+        </mat-option>
+      } @else if (isLoadingParticipants()) {
+        <mat-option disabled>
+          Loading...
+        </mat-option>
+      } @else if (messageForm.controls.recipientType.value === 'Parent') {
+        @for (parent of parents(); track parent.id) {
+          <mat-option [value]="parent.id">
+            {{ parent.firstName }}
+            {{ parent.middleName }}
+            {{ parent.lastName }}
+          </mat-option>
+        }
+      } @else {
+        @for (teacher of teachers(); track teacher.id) {
+          <mat-option [value]="teacher.id">
+            {{ teacher.firstName }}
+            {{ teacher.middleName }}
+            {{ teacher.lastName }}
+          </mat-option>
+        }
+      }
+    </mat-select>
+
+    @if (
+      messageForm.controls.recipientId.touched &&
+      messageForm.controls.recipientId.hasError('required')
+    ) {
+      <mat-error>Recipient is required.</mat-error>
+    }
+  </mat-form-field>
+
+
+  <!-- Message -->
+  <mat-form-field appearance="outline">
+    <mat-label>Message</mat-label>
+
+    <textarea
+      matInput
+      formControlName="body"
+      rows="6"
+      placeholder="Write your message..."
+    ></textarea>
+
+    @if (
+      messageForm.controls.body.touched &&
+      messageForm.controls.body.hasError('required')
+    ) {
+      <mat-error>Message is required.</mat-error>
+    }
+
+    @if (
+      messageForm.controls.body.touched &&
+      messageForm.controls.body.hasError('maxlength')
+    ) {
+      <mat-error>
+        Message cannot exceed 2000 characters.
+      </mat-error>
+    }
+  </mat-form-field>
+
+
+  <!-- Error -->
+  @if (errorMessage()) {
+    <div class="error-message">
+      {{ errorMessage() }}
+    </div>
+  }
+
+
+  <!-- Actions -->
+  <div class="form-actions">
+    <button
+      type="button"
+      mat-stroked-button
+      (click)="cancel()"
+    >
+      Cancel
+    </button>
+
+    <button
+      type="submit"
+      mat-raised-button
+      color="primary"
+      [disabled]="isSubmitting()"
+    >
+      @if (isSubmitting()) {
+        Sending...
+      } @else {
+        Send Message
+      }
+    </button>
+  </div>
+
+</form>
+
+  </mat-card>
+</div>
