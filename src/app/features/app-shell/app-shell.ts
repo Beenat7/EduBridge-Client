@@ -10,6 +10,13 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { AuthService } from '../../auth/auth.service';
 
+interface NavigationItem {
+  label: string;
+  route: string;
+  icon: string;
+  roles: string[];
+}
+
 @Component({
   selector: 'app-shell',
   standalone: true,
@@ -40,19 +47,76 @@ export class AppShell {
     return user?.roles?.[0] ?? 'User';
   });
 
-  readonly navigationItems = [
-    { label: 'Dashboard', route: '/dashboard', icon: 'dashboard' },
-    { label: 'Schools', route: '/schools', icon: 'school' },
-    { label: 'Students', route: '/students', icon: 'people' },
-    { label: 'Parents', route: '/parents', icon: 'family_restroom' },
-    { label: 'Teachers', route: '/teachers', icon: 'person' },
-    { label: 'Subjects', route: '/subjects', icon: 'menu_book' },
-    { label: 'Classes', route: '/classes', icon: 'class' },
-    { label: 'Announcements', route: '/announcements', icon: 'campaign' },
-    {label: 'Direct Messages',route: '/direct-messages',icon: 'mail',},
+  private readonly allNavigationItems: NavigationItem[] = [
+    {
+      label: 'Dashboard',
+      route: '/dashboard',
+      icon: 'dashboard',
+      roles: ['PlatformAdmin', 'SchoolAdmin', 'Teacher', 'Parent']
+    },
+    {
+      label: 'Schools',
+      route: '/schools',
+      icon: 'school',
+      roles: ['PlatformAdmin']
+    },
+    {
+      label: 'Students',
+      route: '/students',
+      icon: 'people',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Parents',
+      route: '/parents',
+      icon: 'family_restroom',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Teachers',
+      route: '/teachers',
+      icon: 'person',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Subjects',
+      route: '/subjects',
+      icon: 'menu_book',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Classes',
+      route: '/classes',
+      icon: 'class',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Announcements',
+      route: '/announcements',
+      icon: 'campaign',
+      roles: ['SchoolAdmin', 'Teacher', 'Parent']
+    },
+    {
+      label: 'Direct Messages',
+      route: '/direct-messages',
+      icon: 'mail',
+      roles: ['SchoolAdmin', 'Teacher', 'Parent']
+    }
   ];
 
-  readonly futureNavigation: Array<{ label: string; route: string | null; icon: string }> = [];
+  readonly navigationItems = computed(() => {
+    const role = this.userRole();
+
+    return this.allNavigationItems.filter((item) =>
+      item.roles.includes(role)
+    );
+  });
+
+  readonly futureNavigation: Array<{
+    label: string;
+    route: string | null;
+    icon: string;
+  }> = [];
 
   constructor() {
     this.updateLayoutMode();

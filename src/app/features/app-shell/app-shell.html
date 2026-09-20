@@ -41,7 +41,7 @@
       </div>
 
       <mat-nav-list>
-        @for (item of navigationItems; track item.route) {
+        @for (item of navigationItems(); track item.route) {
           <a
             mat-list-item
             [routerLink]="item.route"
@@ -52,23 +52,7 @@
           </a>
         }
       </mat-nav-list>
-
-      <mat-divider></mat-divider>
-
-      <div class="nav-section-label">Future modules</div>
-      <mat-nav-list>
-        @for (item of futureNavigation; track item.label) {
-          <a
-            mat-list-item
-            [class.disabled-link]="!item.route"
-            [attr.aria-disabled]="!item.route"
-            [routerLink]="item.route ?? null"
-            (click)="closeSidenav()">
-            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-            <span matListItemTitle>{{ item.label }}</span>
-          </a>
-        }
-      </mat-nav-list>
+      
     </mat-sidenav>
 
     <mat-sidenav-content class="content-panel">

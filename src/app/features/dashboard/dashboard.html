@@ -1,7 +1,6 @@
 <section class="dashboard-page">
   <div class="page-header">
     <div>
-      <p class="eyebrow">Overview</p>
       <h1>
         @if (currentUser(); as user) {
           Welcome back, {{ user.email }}
@@ -9,7 +8,10 @@
           Welcome back
         }
       </h1>
-      <p class="subtitle">Your EduBridge workspace at a glance.</p>
+
+      <p class="subtitle">
+        Your EduBridge workspace at a glance.
+      </p>
     </div>
 
     @if (currentUser(); as user) {
@@ -38,16 +40,24 @@
   @if (!loading() && !error()) {
     <div class="stats-grid">
       @for (metric of metrics(); track metric.label) {
-        <a class="metric-card" [routerLink]="metric.route" mat-card>
+        <a
+          class="metric-card"
+          [routerLink]="metric.route"
+          mat-card>
           <mat-card-content>
             <div class="metric-head">
               <div class="metric-icon">
                 <mat-icon>{{ metric.icon }}</mat-icon>
               </div>
-              <span class="metric-label">{{ metric.label }}</span>
+
+              <span class="metric-label">
+                {{ metric.label }}
+              </span>
             </div>
 
-            <div class="metric-value">{{ metric.value }}</div>
+            <div class="metric-value">
+              {{ metric.value }}
+            </div>
           </mat-card-content>
         </a>
       }
@@ -61,7 +71,7 @@
 
         <mat-card-content>
           <div class="action-list">
-            @for (action of quickActions; track action.label) {
+            @for (action of quickActions(); track action.label) {
               <a
                 mat-stroked-button
                 [routerLink]="action.route"
@@ -83,11 +93,14 @@
         <mat-card-content>
           <div class="module-list">
             @for (metric of metrics(); track metric.label) {
-              <a [routerLink]="metric.route" class="module-row">
+              <a
+                [routerLink]="metric.route"
+                class="module-row">
                 <div class="module-name">
                   <mat-icon>{{ metric.icon }}</mat-icon>
                   <span>{{ metric.label }}</span>
                 </div>
+
                 <strong>{{ metric.value }}</strong>
               </a>
             }

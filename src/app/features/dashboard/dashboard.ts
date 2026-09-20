@@ -17,6 +17,7 @@ import { SubjectService } from '../../services/subject.service';
 import { ClassService } from '../../services/class.service';
 import { AnnouncementService } from '../../services/announcement.service';
 import { DirectMessageService } from '../../services/direct-message.service';
+
 import { forkJoin } from 'rxjs';
 
 interface DashboardCounts {
@@ -28,6 +29,21 @@ interface DashboardCounts {
   classes: number;
   announcements: number;
   directMessages: number;
+}
+
+interface DashboardMetric {
+  label: string;
+  value: number;
+  route: string;
+  icon: string;
+  roles: string[];
+}
+
+interface QuickAction {
+  label: string;
+  route: string;
+  icon: string;
+  roles: string[];
 }
 
 @Component({
@@ -55,7 +71,9 @@ export class Dashboard {
   private readonly classService = inject(ClassService);
   private readonly announcementService = inject(AnnouncementService);
   private readonly directMessageService = inject(DirectMessageService);
+
   readonly currentUser = this.authService.currentUser;
+
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
 
@@ -70,30 +88,176 @@ export class Dashboard {
     directMessages: 0
   });
 
-  readonly metrics = computed(() => [
-    { label: 'Schools', value: this.counts().schools, route: '/schools', icon: 'school' },
-    { label: 'Students', value: this.counts().students, route: '/students', icon: 'people' },
-    { label: 'Parents', value: this.counts().parents, route: '/parents', icon: 'family_restroom' },
-    { label: 'Teachers', value: this.counts().teachers, route: '/teachers', icon: 'person' },
-    { label: 'Subjects', value: this.counts().subjects, route: '/subjects', icon: 'menu_book' },
-    { label: 'Classes', value: this.counts().classes, route: '/classes', icon: 'class' },
-    { label: 'Announcements', value: this.counts().announcements, route: '/announcements', icon: 'campaign' },
-    { label: 'Direct Messages', value: this.counts().directMessages, route: '/direct-messages', icon: 'mail' }
-  ]);
-
-  readonly quickActions = [
-    { label: 'Add School', route: '/schools/new', icon: 'add_business' },
-    { label: 'Add Student', route: '/students/new', icon: 'person_add' },
-    { label: 'Add Parent', route: '/parents/new', icon: 'group_add' },
-    { label: 'Add Teacher', route: '/teachers/new', icon: 'person_add_alt_1' },
-    { label: 'Add Subject', route: '/subjects/new', icon: 'library_add' },
-    { label: 'Add Class', route: '/classes/new', icon: 'class' },
-    { label: 'Add Announcement', route: '/announcements/new', icon: 'campaign' },
-    { label: 'New Message', route: '/direct-messages/new', icon: 'mail' }
+  private readonly allMetrics: DashboardMetric[] = [
+    {
+      label: 'Schools',
+      value: 0,
+      route: '/schools',
+      icon: 'school',
+      roles: ['PlatformAdmin']
+    },
+    {
+      label: 'Students',
+      value: 0,
+      route: '/students',
+      icon: 'people',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Parents',
+      value: 0,
+      route: '/parents',
+      icon: 'family_restroom',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Teachers',
+      value: 0,
+      route: '/teachers',
+      icon: 'person',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Subjects',
+      value: 0,
+      route: '/subjects',
+      icon: 'menu_book',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Classes',
+      value: 0,
+      route: '/classes',
+      icon: 'class',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Announcements',
+      value: 0,
+      route: '/announcements',
+      icon: 'campaign',
+      roles: ['SchoolAdmin', 'Teacher', 'Parent']
+    },
+    {
+      label: 'Direct Messages',
+      value: 0,
+      route: '/direct-messages',
+      icon: 'mail',
+      roles: ['SchoolAdmin', 'Teacher', 'Parent']
+    }
   ];
+
+  readonly metrics = computed(() => {
+    const role = this.userRole();
+
+    return this.allMetrics
+      .filter((metric) => metric.roles.includes(role))
+      .map((metric) => ({
+        ...metric,
+        value: this.getMetricValue(metric.label)
+      }));
+  });
+
+  private readonly allQuickActions: QuickAction[] = [
+    {
+      label: 'Add School',
+      route: '/schools/new',
+      icon: 'add_business',
+      roles: ['PlatformAdmin']
+    },
+    {
+      label: 'Add Student',
+      route: '/students/new',
+      icon: 'person_add',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Add Parent',
+      route: '/parents/new',
+      icon: 'group_add',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Add Teacher',
+      route: '/teachers/new',
+      icon: 'person_add_alt_1',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Add Subject',
+      route: '/subjects/new',
+      icon: 'library_add',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Add Class',
+      route: '/classes/new',
+      icon: 'class',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'Add Announcement',
+      route: '/announcements/new',
+      icon: 'campaign',
+      roles: ['SchoolAdmin']
+    },
+    {
+      label: 'New Message',
+      route: '/direct-messages/new',
+      icon: 'mail',
+      roles: ['SchoolAdmin', 'Teacher', 'Parent']
+    }
+  ];
+
+  readonly quickActions = computed(() => {
+    const role = this.userRole();
+
+    return this.allQuickActions.filter((action) =>
+      action.roles.includes(role)
+    );
+  });
+
+  readonly userRole = computed(() => {
+    const user = this.currentUser();
+
+    return user?.roles?.[0] ?? 'User';
+  });
 
   constructor() {
     this.loadDashboardData();
+  }
+
+  private getMetricValue(label: string): number {
+    const currentCounts = this.counts();
+
+    switch (label) {
+      case 'Schools':
+        return currentCounts.schools;
+
+      case 'Students':
+        return currentCounts.students;
+
+      case 'Parents':
+        return currentCounts.parents;
+
+      case 'Teachers':
+        return currentCounts.teachers;
+
+      case 'Subjects':
+        return currentCounts.subjects;
+
+      case 'Classes':
+        return currentCounts.classes;
+
+      case 'Announcements':
+        return currentCounts.announcements;
+
+      case 'Direct Messages':
+        return currentCounts.directMessages;
+
+      default:
+        return 0;
+    }
   }
 
   private loadDashboardData(): void {
@@ -121,6 +285,7 @@ export class Dashboard {
           announcements: result.announcements.length,
           directMessages: result.directMessages.length
         });
+
         this.loading.set(false);
       },
       error: () => {

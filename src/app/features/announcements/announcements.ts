@@ -16,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { AuthService } from '../../auth/auth.service';
 import { Announcement } from '../../models/announcement.model';
 import { AnnouncementService } from '../../services/announcement.service';
 
@@ -36,18 +37,39 @@ import { AnnouncementService } from '../../services/announcement.service';
   styleUrl: './announcements.scss'
 })
 export class Announcements {
+  private readonly authService = inject(AuthService);
   private readonly announcementService = inject(AnnouncementService);
 
   readonly announcements = signal<Announcement[]>([]);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
 
-  readonly displayedColumns = [
-    'announcement',
-    'status',
-    'createdAt',
-    'actions'
-  ];
+  readonly userRole = computed(() => {
+    return this.authService.currentUser()?.roles?.[0] ?? '';
+  });
+
+  readonly canManageAnnouncements = computed(() => {
+    const role = this.userRole();
+
+    return role === 'PlatformAdmin' || role === 'SchoolAdmin';
+  });
+
+  readonly displayedColumns = computed(() => {
+    if (this.canManageAnnouncements()) {
+      return [
+        'announcement',
+        'status',
+        'createdAt',
+        'actions'
+      ];
+    }
+
+    return [
+      'announcement',
+      'status',
+      'createdAt'
+    ];
+  });
 
   readonly hasAnnouncements = computed(
     () => this.announcements().length > 0
@@ -61,23 +83,36 @@ export class Announcements {
     switch (status?.toLowerCase()) {
       case 'draft':
         return 'status-chip status-draft';
+
       case 'published':
         return 'status-chip status-published';
+
       case 'archived':
         return 'status-chip status-archived';
+
       default:
         return 'status-chip';
     }
   }
 
   publishAnnouncement(id: string): void {
+    if (!this.canManageAnnouncements()) {
+      return;
+    }
+
     this.announcementService.publish(id).subscribe({
       next: () => this.loadAnnouncements(),
-      error: () => this.error.set('Failed to publish announcement.')
+      error: () => {
+        this.error.set('Failed to publish announcement.');
+      }
     });
   }
 
   archiveAnnouncement(id: string): void {
+    if (!this.canManageAnnouncements()) {
+      return;
+    }
+
     const confirmed = window.confirm(
       'Archive this announcement?'
     );
@@ -88,7 +123,9 @@ export class Announcements {
 
     this.announcementService.archive(id).subscribe({
       next: () => this.loadAnnouncements(),
-      error: () => this.error.set('Failed to archive announcement.')
+      error: () => {
+        this.error.set('Failed to archive announcement.');
+      }
     });
   }
 
