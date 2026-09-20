@@ -171,7 +171,7 @@ Contains frontend configuration related to communication with the EduBridge back
 
 **### Schools — Platform Admin**
 
-![Schools — Platform Admin](docs/screenshots/Schools-Platformadmin.png)
+![Schools — Platform Admin](docs/screenshots/Schools-platformadmin.png)
 
 **### Students — School Admin**
 
